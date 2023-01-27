@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace CrowdSec\Common\Client\RequestHandler;
 
-use CrowdSec\Common\Client\HttpMessage\Request;
-use CrowdSec\Common\Client\HttpMessage\Response;
-
 /**
  * Request handler abstraction.
  *
@@ -17,7 +14,7 @@ use CrowdSec\Common\Client\HttpMessage\Response;
  * @copyright Copyright (c) 2022+ CrowdSec
  * @license   MIT License
  */
-abstract class AbstractRequestHandler
+abstract class AbstractRequestHandler implements RequestHandlerInterface
 {
     /**
      * @var array
@@ -38,9 +35,4 @@ abstract class AbstractRequestHandler
     {
         return (isset($this->configs[$name])) ? $this->configs[$name] : null;
     }
-
-    /**
-     * Performs an HTTP request and returns a response.
-     */
-    abstract public function handle(Request $request): Response;
 }
