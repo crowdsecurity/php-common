@@ -13,7 +13,7 @@ The public API of this library consists of all public or protected methods, prop
 ---
 
 ## [1.0.0](https://github.com/crowdsecurity/php-common/releases/tag/v1.0.0) - 2023-01-27
-[_Compare with previous release_](https://github.com/crowdsecurity/php-lapi-client/compare/v0.0.1...v1.0.0)
+[_Compare with previous release_](https://github.com/crowdsecurity/php-common/compare/v0.0.1...v1.0.0)
 
 ### Changed
 
