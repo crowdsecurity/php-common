@@ -12,6 +12,16 @@ The public API of this library consists of all public or protected methods, prop
 
 ---
 
+## [1.1.0](https://github.com/crowdsecurity/php-common/releases/tag/v1.1.0) - 2023-01-27
+[_Compare with previous release_](https://github.com/crowdsecurity/php-common/compare/v1.0.0...v1.1.0)
+
+
+### Added
+
+- Add `RequestHandlerInterface` implemented by the `AbstractRequestHandler` class 
+
+---
+
 ## [1.0.0](https://github.com/crowdsecurity/php-common/releases/tag/v1.0.0) - 2023-01-27
 [_Compare with previous release_](https://github.com/crowdsecurity/php-common/compare/v0.0.1...v1.0.0)
 
