@@ -50,6 +50,7 @@ use PHPUnit\TextUI\XmlConfiguration\File;
  * @covers \CrowdSec\Common\Client\AbstractClient::sendRequest
  *
  * @uses \CrowdSec\Common\Client\HttpMessage\Request::__construct
+ * @uses \CrowdSec\Common\Logger\AbstractLog::__construct
  */
 final class AbstractClientTest extends TestAbstractClient
 {

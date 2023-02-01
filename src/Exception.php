@@ -2,12 +2,10 @@
 
 declare(strict_types=1);
 
-namespace CrowdSec\Common\Client;
-
-use CrowdSec\Common\Exception;
+namespace CrowdSec\Common;
 
 /**
- * Class for all exceptions thrown by CrowdSec client.
+ * Class for all exceptions thrown by CrowdSec.
  *
  * @author    CrowdSec team
  *
@@ -16,6 +14,6 @@ use CrowdSec\Common\Exception;
  * @copyright Copyright (c) 2022+ CrowdSec
  * @license   MIT License
  */
-class ClientException extends Exception
+class Exception extends \RuntimeException
 {
 }

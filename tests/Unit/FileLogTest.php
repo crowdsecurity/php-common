@@ -23,6 +23,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \CrowdSec\Common\Logger\FileLog::__construct
+ * @covers \CrowdSec\Common\Logger\AbstractLog::__construct
  */
 final class FileLogTest extends TestCase
 {
@@ -68,6 +69,9 @@ final class FileLogTest extends TestCase
 
         $logger = new FileLog(['log_directory_path' => $this->root->url()]);
 
+        $handlers = $logger->getHandlers();
+        $this->assertCount(1, $handlers, 'Should have one handler');
+
         // Test prod log
         $logger->info('', [
             'type' => 'TEST1',
@@ -99,6 +103,9 @@ final class FileLogTest extends TestCase
             'log_directory_path' => $this->root->url(),
             'debug_mode' => true,
         ]);
+
+        $handlers = $logger->getHandlers();
+        $this->assertCount(2, $handlers, 'Should have 2 handlers');
 
         $logger->info('', [
             'type' => 'TEST2',
@@ -159,6 +166,70 @@ final class FileLogTest extends TestCase
             '/.*200.*"type":"TEST3"/',
             file_get_contents($this->root->url() . '/' . $this->debugFile),
             'Debug log content should be correct'
+        );
+    }
+
+    public function testFormat()
+    {
+        $logger = new FileLog([
+            'log_directory_path' => $this->root->url(),
+        ]);
+        $this->assertEquals(
+            false,
+            file_exists($this->root->url() . '/' . $this->prodFile),
+            'Prod File should not exist'
+        );
+        $logger->error('error-message', [
+            'type' => 'TEST3',
+        ]);
+
+        $this->assertEquals(
+            true,
+            file_exists($this->root->url() . '/' . $this->prodFile),
+            'Prod File should  exist'
+        );
+
+        PHPUnitUtil::assertRegExp(
+            $this,
+            '/.*|400|error-message|.*"type":"TEST3"/',
+            file_get_contents($this->root->url() . '/' . $this->prodFile),
+            'Prod log content should formatted with default format'
+        );
+
+        file_put_contents($this->root->url() . '/' . $this->prodFile, '');
+        $this->assertEmpty(file_get_contents($this->root->url() . '/' . $this->prodFile),
+            'Prod log content should be empty');
+
+        $logger = new FileLog([
+            'log_directory_path' => $this->root->url(),
+            'format' => '%message%|%level%|%message%|%level%',
+        ]);
+        $logger->error('error-message', [
+            'type' => 'TEST3',
+        ]);
+        $this->assertEquals('error-message|400|error-message|400', file_get_contents($this->root->url() . '/' .
+                                                                                      $this->prodFile),
+            'Prod log content should be well formatted');
+
+        file_put_contents($this->root->url() . '/' . $this->prodFile, '');
+        $this->assertEmpty(file_get_contents($this->root->url() . '/' . $this->prodFile),
+            'Prod log content should be empty');
+
+        $error = '';
+        try {
+            $logger = new FileLog([
+                'log_directory_path' => $this->root->url(),
+                'format' => array('bad-config' => true),
+            ]);
+        } catch (\TypeError $e){
+            $error = $e->getMessage();
+        }
+
+        PHPUnitUtil::assertRegExp(
+            $this,
+            '/must be of.*type.*string.*array given/',
+            $error,
+            'Should throw an error'
         );
     }
 }
