@@ -53,7 +53,7 @@ class Constants
      */
     public const REMEDIATION_BYPASS = 'bypass';
     /**
-     * @var string The bypass remediation
+     * @var string The captcha remediation
      */
     public const REMEDIATION_CAPTCHA = 'captcha';
     /**
@@ -75,5 +75,5 @@ class Constants
     /**
      * @var string The current version of this library
      */
-    public const VERSION = 'v1.1.0';
+    public const VERSION = 'v1.2.0';
 }

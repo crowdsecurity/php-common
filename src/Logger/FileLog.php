@@ -18,7 +18,7 @@ use Monolog\Logger;
  * @copyright Copyright (c) 2022+ CrowdSec
  * @license   MIT License
  */
-class FileLog extends Logger
+class FileLog extends AbstractLog
 {
     /**
      * @var string The debug log filename
@@ -27,7 +27,7 @@ class FileLog extends Logger
     /**
      * @var string The logger name
      */
-    public const LOGGER_NAME = 'common-logger';
+    public const LOGGER_NAME = 'common-file-logger';
     /**
      * @var string The prod log filename
      */
@@ -35,19 +35,19 @@ class FileLog extends Logger
 
     public function __construct(array $configs = [], string $name = self::LOGGER_NAME)
     {
-        parent::__construct($name);
+        parent::__construct($configs, $name);
         $logDir = $configs['log_directory_path'] ?? __DIR__ . '/.logs';
         if (empty($configs['disable_prod_log'])) {
             $logPath = $logDir . '/' . self::PROD_FILE;
             $fileHandler = new RotatingFileHandler($logPath, 0, Logger::INFO);
-            $fileHandler->setFormatter(new LineFormatter("%datetime%|%level%|%message%|%context%\n"));
+            $fileHandler->setFormatter(new LineFormatter($this->format));
             $this->pushHandler($fileHandler);
         }
 
         if (!empty($configs['debug_mode'])) {
             $debugLogPath = $logDir . '/' . self::DEBUG_FILE;
             $debugFileHandler = new RotatingFileHandler($debugLogPath, 0, Logger::DEBUG);
-            $debugFileHandler->setFormatter(new LineFormatter("%datetime%|%level%|%message%|%context%\n"));
+            $debugFileHandler->setFormatter(new LineFormatter($this->format));
             $this->pushHandler($debugFileHandler);
         }
     }

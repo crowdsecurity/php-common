@@ -124,11 +124,6 @@ ddev composer update --working-dir ./my-own-modules/php-common
 ddev php ./my-own-modules/php-common/vendor/bin/phpunit  ./my-own-modules/php-common/tests/Unit --testdox
 ```
 
-#### Integration test
-
-```bash
-ddev php ./my-own-modules/php-common/vendor/bin/phpunit  ./my-own-modules/php-common/tests/Integration --testdox     
-```
 
 #### Coding standards
 

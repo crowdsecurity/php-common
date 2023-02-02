@@ -12,6 +12,18 @@ The public API of this library consists of all public or protected methods, prop
 
 ---
 
+## [1.2.0](https://github.com/crowdsecurity/php-common/releases/tag/v1.2.0) - 2023-02-02
+[_Compare with previous release_](https://github.com/crowdsecurity/php-common/compare/v1.1.0...v1.2.0)
+
+
+### Added
+
+- Add default `Exception` class
+- Add `ConsoleLog` logger
+- Log message format can be modified with a `format` configuration
+
+---
+
 ## [1.1.0](https://github.com/crowdsecurity/php-common/releases/tag/v1.1.0) - 2023-01-27
 [_Compare with previous release_](https://github.com/crowdsecurity/php-common/compare/v1.0.0...v1.1.0)
 
