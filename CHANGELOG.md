@@ -12,6 +12,16 @@ The public API of this library consists of all public or protected methods, prop
 
 ---
 
+## [1.3.0](https://github.com/crowdsecurity/php-common/releases/tag/v1.3.0) - 2023-02-23
+[_Compare with previous release_](https://github.com/crowdsecurity/php-common/compare/v1.2.0...v1.3.0)
+
+
+### Added
+
+- Add `VERSION_REGEX` constant
+
+---
+
 ## [1.2.0](https://github.com/crowdsecurity/php-common/releases/tag/v1.2.0) - 2023-02-02
 [_Compare with previous release_](https://github.com/crowdsecurity/php-common/compare/v1.1.0...v1.2.0)
 

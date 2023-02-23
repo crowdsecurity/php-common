@@ -75,5 +75,9 @@ class Constants
     /**
      * @var string The current version of this library
      */
-    public const VERSION = 'v1.2.0';
+    public const VERSION = 'v1.3.0';
+    /**
+     * @var string The version regex
+     */
+    public const VERSION_REGEX = '#^v\d{1,4}(\.\d{1,4}){2}$#';
 }
