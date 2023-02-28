@@ -12,13 +12,19 @@ The public API of this library consists of all public or protected methods, prop
 
 ---
 
-## [?.?.?](https://github.com/crowdsecurity/php-common/releases/tag/v1.3.0) - 2023-??-??
-[_Compare with previous release_](https://github.com/crowdsecurity/php-common/compare/v1.2.0...v1.3.0)
+## [?.?.?](https://github.com/crowdsecurity/php-common/releases/tag/v?.?.?) - 2023-??-??
+[_Compare with previous release_](https://github.com/crowdsecurity/php-common/compare/v1.3.0...v?.?.?)
 
 
 ### Added
 
 - Add `ORIGIN_CAPI` and `ORIGIN_LISTS` constants
+
+---
+
+### Changed
+
+- Change visibility of `RequestHandler/FileGetContents::convertHeadersToString` method from private to protected
 
 ---
 
