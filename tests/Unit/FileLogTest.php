@@ -219,9 +219,9 @@ final class FileLogTest extends TestCase
         try {
             $logger = new FileLog([
                 'log_directory_path' => $this->root->url(),
-                'format' => array('bad-config' => true),
+                'format' => ['bad-config' => true],
             ]);
-        } catch (\TypeError $e){
+        } catch (\TypeError $e) {
             $error = $e->getMessage();
         }
 
