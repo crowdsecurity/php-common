@@ -7,7 +7,7 @@ namespace CrowdSec\Common\Client;
 use CrowdSec\Common\Client\HttpMessage\Request;
 use CrowdSec\Common\Client\HttpMessage\Response;
 use CrowdSec\Common\Client\RequestHandler\Curl;
-use CrowdSec\Common\Client\RequestHandler\RequestHandlerInterface;
+use CrowdSec\Common\Client\RequestHandler\AbstractRequestHandler;
 use Monolog\Handler\NullHandler;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
@@ -21,6 +21,8 @@ use Psr\Log\LoggerInterface;
  *
  * @copyright Copyright (c) 2022+ CrowdSec
  * @license   MIT License
+ *
+ * @todo : (BC 2.0.0) change type of $requestHandler in constructor to RequestHandlerInterface
  */
 abstract class AbstractClient
 {
@@ -37,7 +39,7 @@ abstract class AbstractClient
      */
     protected $logger;
     /**
-     * @var RequestHandlerInterface
+     * @var AbstractRequestHandler
      */
     private $requestHandler;
     /**
@@ -47,7 +49,7 @@ abstract class AbstractClient
 
     public function __construct(
         array $configs,
-        RequestHandlerInterface $requestHandler = null,
+        AbstractRequestHandler $requestHandler = null,
         LoggerInterface $logger = null
     ) {
         $this->configs = $configs;
@@ -79,7 +81,7 @@ abstract class AbstractClient
         return $this->logger;
     }
 
-    public function getRequestHandler(): RequestHandlerInterface
+    public function getRequestHandler(): AbstractRequestHandler
     {
         return $this->requestHandler;
     }

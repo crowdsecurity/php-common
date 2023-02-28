@@ -16,12 +16,6 @@ The public API of this library consists of all public or protected methods, prop
 [_Compare with previous release_](https://github.com/crowdsecurity/php-common/compare/v1.2.0...v1.3.0)
 
 
-### Changed
-
-- If not null, second param of `AbstractClient::__construct` method must implement `RequestHandlerInterface`
-
----
-
 ### Added
 
 - Add `ORIGIN_CAPI` and `ORIGIN_LISTS` constants
