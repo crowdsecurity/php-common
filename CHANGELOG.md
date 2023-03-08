@@ -12,24 +12,20 @@ the `src` folder.
 
 ---
 
-## [3.0.0](https://github.com/crowdsecurity/php-common/releases/tag/v3.0.0) - 2023-03-09
-[_Compare with previous release_](https://github.com/crowdsecurity/php-common/compare/v1.3.0...v3.0.0)
+## [2.0.0](https://github.com/crowdsecurity/php-common/releases/tag/v2.0.0) - 2023-03-09
+[_Compare with previous release_](https://github.com/crowdsecurity/php-common/compare/v1.3.0...v2.0.0)
 
 
 ### Changed 
 
 - *Breaking change*: If not null, the second param of the `AbstractClient::__contruct` method must implement
     `RequestHandlerInterface`
+- Change visibility of `RequestHandler/FileGetContents::convertHeadersToString` method from private to protected
 
 ### Added
 
 - Add `ORIGIN_CAPI` and `ORIGIN_LISTS` constants
 
----
-
-### Changed
-
-- Change visibility of `RequestHandler/FileGetContents::convertHeadersToString` method from private to protected
 
 ---
 
