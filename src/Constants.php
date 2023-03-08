@@ -83,7 +83,7 @@ class Constants
     /**
      * @var string The current version of this library
      */
-    public const VERSION = 'v1.3.0';
+    public const VERSION = 'v3.0.0';
     /**
      * @var string The version regex
      */

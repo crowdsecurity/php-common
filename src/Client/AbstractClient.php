@@ -21,7 +21,6 @@ use Psr\Log\LoggerInterface;
  *
  * @copyright Copyright (c) 2022+ CrowdSec
  * @license   MIT License
- *
  */
 abstract class AbstractClient
 {
