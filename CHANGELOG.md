@@ -18,8 +18,8 @@ the `src` folder.
 
 ### Changed 
 
-- *Breaking change*: If not null, the second param of the `AbstractClient::__contruct` method must implement
-    `RequestHandlerInterface`
+- *Breaking change*: If not null, the second param of the `AbstractClient::__contruct` method must implement 
+  `RequestHandlerInterface`
 - Change visibility of `RequestHandler/FileGetContents::convertHeadersToString` method from private to protected
 
 ### Added
