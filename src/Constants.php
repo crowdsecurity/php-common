@@ -45,6 +45,14 @@ class Constants
      */
     public const ORIGIN = 'crowdsec';
     /**
+     * @var string The CAPI origin for decisions
+     */
+    public const ORIGIN_CAPI = 'capi';
+    /**
+     * @var string The LISTS origin for decisions
+     */
+    public const ORIGIN_LISTS = 'lists';
+    /**
      * @var string The ban remediation
      */
     public const REMEDIATION_BAN = 'ban';
@@ -75,7 +83,7 @@ class Constants
     /**
      * @var string The current version of this library
      */
-    public const VERSION = 'v1.3.0';
+    public const VERSION = 'v2.0.0';
     /**
      * @var string The version regex
      */
