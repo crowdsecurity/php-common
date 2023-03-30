@@ -20,6 +20,10 @@ use Monolog\Logger;
  * @copyright Copyright (c) 2022+ CrowdSec
  * @license   MIT License
  */
+
+/**
+ * @todo in 3.0.0, log rotation should be default to false
+ */
 class FileLog extends AbstractLog
 {
     /**
