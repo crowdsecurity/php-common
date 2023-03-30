@@ -12,6 +12,19 @@ the `src` folder.
 
 ---
 
+
+## [2.1.0](https://github.com/crowdsecurity/php-common/releases/tag/v2.1.0) - 2023-03-30
+[_Compare with previous release_](https://github.com/crowdsecurity/php-common/compare/v2.0.0...v2.1.0)
+
+
+### Added
+
+- Add `no_rotation` configuration for `FileLog` logger
+
+
+---
+
+
 ## [2.0.0](https://github.com/crowdsecurity/php-common/releases/tag/v2.0.0) - 2023-03-09
 [_Compare with previous release_](https://github.com/crowdsecurity/php-common/compare/v1.3.0...v2.0.0)
 
