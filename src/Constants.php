@@ -67,7 +67,7 @@ class Constants
     /**
      * @var string The scenario regex
      */
-    public const SCENARIO_REGEX = '#^[A-Za-z0-9]{0,16}\/[A-Za-z0-9_-]{0,32}$#';
+    public const SCENARIO_REGEX = '#^[A-Za-z0-9]{0,16}\/[A-Za-z0-9_-]{0,64}$#';
     /**
      *  @var string The CrowdSec country scope for decisions
      */
@@ -83,7 +83,7 @@ class Constants
     /**
      * @var string The current version of this library
      */
-    public const VERSION = 'v2.1.0';
+    public const VERSION = 'v2.1.1';
     /**
      * @var string The version regex
      */
