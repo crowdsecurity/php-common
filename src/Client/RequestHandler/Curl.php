@@ -21,9 +21,6 @@ use CrowdSec\Common\Constants;
  */
 class Curl extends AbstractRequestHandler
 {
-    /**
-     * {@inheritdoc}
-     */
     public function handle(Request $request): Response
     {
         $handle = curl_init();
@@ -50,8 +47,6 @@ class Curl extends AbstractRequestHandler
     /**
      * @codeCoverageIgnore
      *
-     * @param mixed $handle
-     *
      * @return bool|string
      */
     protected function exec($handle)
@@ -61,10 +56,6 @@ class Curl extends AbstractRequestHandler
 
     /**
      * @codeCoverageIgnore
-     *
-     * @param mixed $handle
-     *
-     * @return mixed
      */
     protected function getResponseHttpCode($handle)
     {

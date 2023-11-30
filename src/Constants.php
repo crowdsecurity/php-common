@@ -69,7 +69,7 @@ class Constants
      */
     public const SCENARIO_REGEX = '#^[A-Za-z0-9]{0,16}\/[A-Za-z0-9_-]{0,64}$#';
     /**
-     *  @var string The CrowdSec country scope for decisions
+     * @var string The CrowdSec country scope for decisions
      */
     public const SCOPE_COUNTRY = 'country';
     /**
