@@ -17,7 +17,7 @@ namespace CrowdSec\Common;
 class Constants
 {
     /**
-     * @var int the default timeout (in seconds) when calling CrowdSec
+     * @var int the default timeout (total time of transfer operation in seconds) when calling a CrowdSec API
      */
     public const API_TIMEOUT = 120;
     /**
@@ -28,6 +28,10 @@ class Constants
      * @var string The TLS auth type
      */
     public const AUTH_TLS = 'tls';
+    /**
+     * @var int the default connection timeout (time of connection phase in seconds) when calling a CrowdSec API
+     */
+    public const API_CONNECT_TIMEOUT = 300;
     /**
      * @var string The date format for CrowdSec data
      */
@@ -69,7 +73,7 @@ class Constants
      */
     public const SCENARIO_REGEX = '#^[A-Za-z0-9]{0,16}\/[A-Za-z0-9_-]{0,64}$#';
     /**
-     *  @var string The CrowdSec country scope for decisions
+     * @var string The CrowdSec country scope for decisions
      */
     public const SCOPE_COUNTRY = 'country';
     /**
