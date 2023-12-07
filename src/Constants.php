@@ -17,6 +17,10 @@ namespace CrowdSec\Common;
 class Constants
 {
     /**
+     * @var int the default connection timeout (time of connection phase in seconds) when calling a CrowdSec API
+     */
+    public const API_CONNECT_TIMEOUT = 300;
+    /**
      * @var int the default timeout (total time of transfer operation in seconds) when calling a CrowdSec API
      */
     public const API_TIMEOUT = 120;
@@ -28,10 +32,6 @@ class Constants
      * @var string The TLS auth type
      */
     public const AUTH_TLS = 'tls';
-    /**
-     * @var int the default connection timeout (time of connection phase in seconds) when calling a CrowdSec API
-     */
-    public const API_CONNECT_TIMEOUT = 300;
     /**
      * @var string The date format for CrowdSec data
      */
@@ -87,7 +87,7 @@ class Constants
     /**
      * @var string The current version of this library
      */
-    public const VERSION = 'v2.1.1';
+    public const VERSION = 'v2.2.0';
     /**
      * @var string The version regex
      */
