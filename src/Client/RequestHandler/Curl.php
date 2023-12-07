@@ -41,7 +41,7 @@ class Curl extends AbstractRequestHandler
 
         curl_close($handle);
 
-        return new Response((string)$response, $statusCode);
+        return new Response((string) $response, $statusCode);
     }
 
     /**
@@ -80,7 +80,8 @@ class Curl extends AbstractRequestHandler
         }
         $timeout = $this->getConfig('api_timeout') ?? Constants::API_TIMEOUT;
         /**
-         * To obtain an unlimited timeout, we don't pass the option (as it is the default behavior)
+         * To obtain an unlimited timeout, we don't pass the option (as it is the default behavior).
+         *
          * @see https://curl.se/libcurl/c/CURLOPT_TIMEOUT.html
          */
         if ($timeout > 0) {
@@ -89,9 +90,9 @@ class Curl extends AbstractRequestHandler
         $connectTimeout = $this->getConfig('api_connect_timeout') ?? Constants::API_CONNECT_TIMEOUT;
         if ($connectTimeout >= 0) {
             /**
-             * 0 means infinite timeout (@see https://www.php.net/manual/en/function.curl-setopt.php
-             * @see https://curl.se/libcurl/c/CURLOPT_CONNECTTIMEOUT.html
+             * 0 means infinite timeout (@see https://www.php.net/manual/en/function.curl-setopt.php.
              *
+             * @see https://curl.se/libcurl/c/CURLOPT_CONNECTTIMEOUT.html
              */
             $result[\CURLOPT_CONNECTTIMEOUT] = $connectTimeout;
         }
