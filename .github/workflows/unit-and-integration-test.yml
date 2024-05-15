@@ -15,6 +15,8 @@ on:
         type: boolean
         description: Run Integration tests
         default: true
+  schedule:
+    - cron: '15 3 * * 4'
 
 permissions:
   contents: read
@@ -63,7 +65,7 @@ jobs:
           ddev exec php -v
 
       - name: Clone sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: ${{env.EXTENSION_PATH}}
 
