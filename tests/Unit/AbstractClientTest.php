@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace CrowdSec\Common\Tests\Unit;
 
 /**
- * Test for file storage.
+ * Test for client.
  *
  * @author    CrowdSec team
  *
@@ -26,7 +26,6 @@ use CrowdSec\Common\Tests\MockedData;
 use CrowdSec\Common\Tests\PHPUnitUtil;
 use CrowdSec\Common\Tests\Unit\AbstractClient as TestAbstractClient;
 use Monolog\Logger;
-use PHPUnit\TextUI\XmlConfiguration\File;
 
 /**
  * @covers \CrowdSec\Common\Client\AbstractClient::__construct
@@ -55,11 +54,11 @@ use PHPUnit\TextUI\XmlConfiguration\File;
  */
 final class AbstractClientTest extends TestAbstractClient
 {
-    protected $configs = ['api_url' => Constants::API_URL];
+    protected $configs = ['api_url' => Constants::API_URL, 'app_sec_url' => Constants::APPSEC_URL];
 
     public function testConstruct()
     {
-        $configs = array_merge($this->configs, ['api_url' => Constants::API_URL]);
+        $configs = $this->configs;
         $client = $this->getMockForAbstractClass(AbstractClient::class, [$configs]);
 
         $this->assertEquals(
@@ -69,6 +68,10 @@ final class AbstractClientTest extends TestAbstractClient
         $this->assertEquals(
             Constants::API_URL,
             $client->getConfig('api_url'),
+            'Config should be set');
+        $this->assertEquals(
+            Constants::APPSEC_URL,
+            $client->getConfig('app_sec_url'),
             'Config should be set');
 
         $requestHandler = $client->getRequestHandler();
@@ -88,7 +91,7 @@ final class AbstractClientTest extends TestAbstractClient
             $client->getUrl(),
             'Url should have a trailing slash');
 
-        $configs = array_merge($this->configs, ['api_url' => Constants::API_URL]);
+        $configs = $this->configs;
         $requestHandler = $this->getFGCMock();
         $logger = new FileLog();
         $client = $this->getMockForAbstractClass(AbstractClient::class, [$configs, $requestHandler, $logger]);
@@ -113,7 +116,7 @@ final class AbstractClientTest extends TestAbstractClient
     public function testPrivateOrProtectedMethods()
     {
         // getFullUrl
-        $configs = array_merge($this->configs, ['api_url' => Constants::API_URL]);
+        $configs = $this->configs;
         $client = $this->getMockForAbstractClass(AbstractClient::class, [$configs]);
 
         $fullUrl = PHPUnitUtil::callMethod(
@@ -125,6 +128,16 @@ final class AbstractClientTest extends TestAbstractClient
             Constants::API_URL . '/test-endpoint',
             $fullUrl,
             'Full Url should be ok'
+        );
+        $fullUrl = PHPUnitUtil::callMethod(
+            $client,
+            'getFullUrl',
+            ['/test-endpoint', 'app_sec']
+        );
+        $this->assertEquals(
+            Constants::APPSEC_URL . '/test-endpoint',
+            $fullUrl,
+            'Full Url should be ok for AppSec'
         );
         // formatResponseBody
         $jsonBody = json_encode(['message' => 'ok']);
@@ -277,7 +290,7 @@ final class AbstractClientTest extends TestAbstractClient
 
     public function testSendRequest()
     {
-        $configs = array_merge($this->configs, ['api_url' => Constants::API_URL]);
+        $configs = $this->configs;
         $requestHandler = $this->getCurlMock(['handle']);
 
         $client = $this->getMockForAbstractClass(AbstractClient::class, [$configs, $requestHandler]);

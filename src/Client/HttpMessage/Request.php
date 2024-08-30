@@ -62,4 +62,11 @@ class Request extends AbstractMessage
     {
         return $this->uri;
     }
+
+    public function setHeaders(array $headers): Request
+    {
+        $this->headers = $headers;
+
+        return $this;
+    }
 }

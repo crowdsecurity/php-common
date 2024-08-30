@@ -85,6 +85,14 @@ class Constants
      */
     public const SCOPE_RANGE = 'range';
     /**
+     * @var string The API type
+     */
+    public const TYPE_API = 'api';
+    /**
+     * @var string The APPSEC type
+     */
+    public const TYPE_APPSEC = 'app_sec';
+    /**
      * @var string The current version of this library
      */
     public const VERSION = 'v2.2.0';

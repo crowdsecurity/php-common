@@ -8,6 +8,7 @@ use CrowdSec\Common\Client\HttpMessage\Request;
 use CrowdSec\Common\Client\HttpMessage\Response;
 use CrowdSec\Common\Client\RequestHandler\Curl;
 use CrowdSec\Common\Client\RequestHandler\RequestHandlerInterface;
+use CrowdSec\Common\Constants;
 use Monolog\Handler\NullHandler;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
@@ -44,15 +45,20 @@ abstract class AbstractClient
      * @var string
      */
     private $url;
+    /**
+     * @var string
+     */
+    private $appSecUrl;
 
     public function __construct(
         array $configs,
-        RequestHandlerInterface $requestHandler = null,
-        LoggerInterface $logger = null
+        ?RequestHandlerInterface $requestHandler = null,
+        ?LoggerInterface $logger = null
     ) {
         $this->configs = $configs;
         $this->requestHandler = ($requestHandler) ?: new Curl($this->configs);
         $this->url = $this->getConfig('api_url');
+        $this->appSecUrl = $this->getConfig('app_sec_url');
         if (!$logger) {
             $logger = new Logger('null');
             $logger->pushHandler(new NullHandler());
@@ -82,9 +88,11 @@ abstract class AbstractClient
         return $this->requestHandler;
     }
 
-    public function getUrl(): string
+    public function getUrl(string $type = Constants::TYPE_API): string
     {
-        return rtrim($this->url, '/') . '/';
+        $url = Constants::TYPE_APPSEC === $type ? $this->appSecUrl : $this->url;
+
+        return rtrim($url, '/') . '/';
     }
 
     /**
@@ -96,7 +104,8 @@ abstract class AbstractClient
         string $method,
         string $endpoint,
         array $parameters = [],
-        array $headers = []
+        array $headers = [],
+        string $type = Constants::TYPE_API
     ): array {
         $method = strtoupper($method);
         if (!in_array($method, $this->allowedMethods)) {
@@ -106,7 +115,7 @@ abstract class AbstractClient
         }
 
         $response = $this->sendRequest(
-            new Request($this->getFullUrl($endpoint), $method, $headers, $parameters)
+            new Request($this->getFullUrl($endpoint, $type), $method, $headers, $parameters)
         );
 
         return $this->formatResponseBody($response);
@@ -151,8 +160,8 @@ abstract class AbstractClient
         return $decoded;
     }
 
-    private function getFullUrl(string $endpoint): string
+    private function getFullUrl(string $endpoint, string $type = Constants::TYPE_API): string
     {
-        return $this->getUrl() . ltrim($endpoint, '/');
+        return $this->getUrl($type) . ltrim($endpoint, '/');
     }
 }
