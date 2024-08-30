@@ -25,7 +25,6 @@ use PHPUnit\Framework\TestCase;
  * @covers \CrowdSec\Common\Client\HttpMessage\Request::getUri
  * @covers \CrowdSec\Common\Client\HttpMessage\Request::__construct
  * @covers \CrowdSec\Common\Client\HttpMessage\AbstractMessage::getHeaders
- * @covers \CrowdSec\Common\Client\HttpMessage\Request::setHeaders
  */
 final class RequestTest extends TestCase
 {
@@ -71,27 +70,45 @@ final class RequestTest extends TestCase
             $headers,
             'Request headers should be set'
         );
-    }
 
-    public function testSetHeaders()
-    {
         $request = new Request(
             'test-uri',
             'POST',
             ['test' => 'test', 'User-Agent' => TestConstants::USER_AGENT_SUFFIX],
-            ['foo' => 'bar']
+            ['foo' => 'bar'],
+            'app_sec'
         );
 
-        $request->setHeaders(['test' => 'test2']);
-
         $headers = $request->getHeaders();
+        $params = $request->getParams();
+        $method = $request->getMethod();
+        $uri = $request->getUri();
+
+        $this->assertEquals(
+            'POST',
+            $method,
+            'Request method should be set'
+        );
+
+        $this->assertEquals(
+            'test-uri',
+            $uri,
+            'Request URI should be set'
+        );
+
+        $this->assertEquals(
+            ['foo' => 'bar'],
+            $params,
+            'Request params should be set'
+        );
 
         $this->assertEquals(
             [
-                'test' => 'test2',
+                'User-Agent' => TestConstants::USER_AGENT_SUFFIX,
+                'test' => 'test',
             ],
             $headers,
-            'Request headers should be set'
+            'Request headers should be set without Content-Type and Accept'
         );
     }
 }

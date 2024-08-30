@@ -20,11 +20,7 @@ As far as possible, we try to adhere to [Symfony guidelines](https://symfony.com
 
 ### Changed
 
-- Modify `Client\AbstractClient` class to handle App Sec request
-
-### Added
-
-- Add `setHeaders` public method in `Client\HttpMessage\Request` class
+- Modify `Client\AbstractClient` and `Client\HttpMessage\Request` classes to handle App Sec requests
 
 
 ---

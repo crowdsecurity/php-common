@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace CrowdSec\Common\Client\HttpMessage;
 
+use CrowdSec\Common\Constants;
+
 /**
  * Request that will be sent to CrowdSec.
  *
@@ -40,11 +42,12 @@ class Request extends AbstractMessage
         string $uri,
         string $method,
         array $headers = [],
-        array $parameters = []
+        array $parameters = [],
+        string $type = Constants::TYPE_REST
     ) {
         $this->uri = $uri;
         $this->method = $method;
-        $this->headers = array_merge($this->headers, $headers);
+        $this->headers = Constants::TYPE_APPSEC === $type ? $headers : array_merge($this->headers, $headers);
         $this->parameters = $parameters;
     }
 
@@ -61,12 +64,5 @@ class Request extends AbstractMessage
     public function getUri(): string
     {
         return $this->uri;
-    }
-
-    public function setHeaders(array $headers): Request
-    {
-        $this->headers = $headers;
-
-        return $this;
     }
 }
