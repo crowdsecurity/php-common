@@ -1,3 +1,5 @@
+name: Documentation links
+
 on:
   workflow_dispatch:
   push:
@@ -11,8 +13,8 @@ permissions:
   contents: read
 
 jobs:
-  markdown-test-and-update:
-    name: Markdown files test and update
+  markdown-test-links:
+    name: Markdown test links
     runs-on: ubuntu-latest
     steps:
 
