@@ -88,7 +88,7 @@ abstract class AbstractClient
         return $this->requestHandler;
     }
 
-    public function getUrl(string $type = Constants::TYPE_API): string
+    public function getUrl(string $type = Constants::TYPE_REST): string
     {
         $url = Constants::TYPE_APPSEC === $type ? $this->appSecUrl : $this->url;
 
@@ -105,7 +105,7 @@ abstract class AbstractClient
         string $endpoint,
         array $parameters = [],
         array $headers = [],
-        string $type = Constants::TYPE_API
+        string $type = Constants::TYPE_REST
     ): array {
         $method = strtoupper($method);
         if (!in_array($method, $this->allowedMethods)) {
@@ -160,7 +160,7 @@ abstract class AbstractClient
         return $decoded;
     }
 
-    private function getFullUrl(string $endpoint, string $type = Constants::TYPE_API): string
+    private function getFullUrl(string $endpoint, string $type = Constants::TYPE_REST): string
     {
         return $this->getUrl($type) . ltrim($endpoint, '/');
     }

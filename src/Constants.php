@@ -85,11 +85,11 @@ class Constants
      */
     public const SCOPE_RANGE = 'range';
     /**
-     * @var string The API type
+     * @var string The REST API type
      */
-    public const TYPE_API = 'api';
+    public const TYPE_REST = 'rest';
     /**
-     * @var string The APPSEC type
+     * @var string The APPSEC API type
      */
     public const TYPE_APPSEC = 'app_sec';
     /**
