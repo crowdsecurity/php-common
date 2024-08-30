@@ -37,4 +37,6 @@ class Constants
     public const API_TIMEOUT = 25;
 
     public const API_URL = 'http://unit.crowdsec.net';
+
+    public const APPSEC_URL = 'http://unit-appsec.crowdsec.net';
 }
