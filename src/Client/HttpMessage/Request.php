@@ -47,7 +47,7 @@ class Request extends AbstractMessage
     ) {
         $this->uri = $uri;
         $this->method = $method;
-        $this->headers = Constants::TYPE_APPSEC === $type ? $headers : array_merge($this->headers, $headers);
+        $this->headers = Constants::TYPE_REST === $type ? array_merge($this->headers, $headers) : $headers;
         $this->parameters = $parameters;
     }
 
