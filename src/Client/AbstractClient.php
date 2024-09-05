@@ -148,7 +148,7 @@ abstract class AbstractClient
             new AppSecRequest($this->getAppSecUrl(), $method, $headers, $rawBody)
         );
 
-        return $this->formatResponseBody($response);
+        return $this->formatResponseBody($response, ['403']);
     }
 
     /**
@@ -164,7 +164,7 @@ abstract class AbstractClient
      *
      * @throws ClientException
      */
-    private function formatResponseBody(Response $response): array
+    private function formatResponseBody(Response $response, array $mutedCodes = ['404']): array
     {
         $statusCode = $response->getStatusCode();
 
@@ -182,7 +182,7 @@ abstract class AbstractClient
 
         if ($statusCode < 200 || $statusCode >= 300) {
             $message = "Unexpected response status code: $statusCode. Body was: " . str_replace("\n", '', $body);
-            if (404 !== $statusCode) {
+            if (!in_array($statusCode, $mutedCodes)) {
                 throw new ClientException($message, $statusCode);
             }
         }
