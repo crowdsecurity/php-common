@@ -40,7 +40,7 @@ class Request extends AbstractMessage
         string $uri,
         string $method,
         array $headers = [],
-        array $parameters = [],
+        array $parameters = []
     ) {
         $this->uri = $uri;
         $this->method = $method;

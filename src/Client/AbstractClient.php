@@ -57,7 +57,7 @@ abstract class AbstractClient
     public function __construct(
         array $configs,
         ?RequestHandlerInterface $requestHandler = null,
-        ?LoggerInterface $logger = null,
+        ?LoggerInterface $logger = null
     ) {
         $this->configs = $configs;
         $this->requestHandler = ($requestHandler) ?: new Curl($this->configs);
@@ -111,7 +111,7 @@ abstract class AbstractClient
         string $method,
         string $endpoint,
         array $parameters = [],
-        array $headers = [],
+        array $headers = []
     ): array {
         $method = strtoupper($method);
         if (!in_array($method, $this->allowedMethods)) {
@@ -135,7 +135,7 @@ abstract class AbstractClient
     protected function requestAppSec(
         string $method,
         array $headers = [],
-        string $rawBody = '',
+        string $rawBody = ''
     ): array {
         $method = strtoupper($method);
         if (!in_array($method, $this->allowedAppSecMethods)) {

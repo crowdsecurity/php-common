@@ -23,13 +23,13 @@ class AppSecRequest extends Request
     /**
      * @var string
      */
-    private $rawBody = '';
+    private $rawBody;
 
     public function __construct(
         string $uri,
         string $method,
         array $headers = [],
-        string $rawBody = '',
+        string $rawBody = ''
     ) {
         $this->rawBody = $rawBody;
         parent::__construct($uri, $method, $headers);
