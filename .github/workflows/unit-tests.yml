@@ -11,10 +11,6 @@ on:
         type: boolean
         description: Run Unit tests
         default: true
-      integration_tests:
-        type: boolean
-        description: Run Integration tests
-        default: true
   schedule:
     - cron: '15 3 * * 4'
 
