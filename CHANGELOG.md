@@ -18,9 +18,9 @@ As far as possible, we try to adhere to [Symfony guidelines](https://symfony.com
 [_Compare with previous release_](https://github.com/crowdsecurity/php-common/compare/v2.2.0...v2.3.0)
 
 
-### Changed
+### Added
 
-- Modify `Client\AbstractClient` and `Client\HttpMessage\Request` classes to handle App Sec requests
+- Add App Sec requests support
 
 
 ---

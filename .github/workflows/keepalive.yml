@@ -22,5 +22,5 @@ jobs:
       - uses: gautamkrishnar/keepalive-workflow@v2
         with:
           time_elapsed: 45
-          workflow_files: "unit-and-integration-test.yml"
+          workflow_files: "unit-tests.yml"
 
