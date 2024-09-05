@@ -15,6 +15,7 @@ namespace CrowdSec\Common\Tests\Unit;
  * @license   MIT License
  */
 
+use CrowdSec\Common\Client\HttpMessage\AppSecRequest;
 use CrowdSec\Common\Client\HttpMessage\Request;
 use CrowdSec\Common\Tests\Constants as TestConstants;
 use PHPUnit\Framework\TestCase;
@@ -24,6 +25,8 @@ use PHPUnit\Framework\TestCase;
  * @covers \CrowdSec\Common\Client\HttpMessage\Request::getMethod
  * @covers \CrowdSec\Common\Client\HttpMessage\Request::getUri
  * @covers \CrowdSec\Common\Client\HttpMessage\Request::__construct
+ * @covers \CrowdSec\Common\Client\HttpMessage\AppSecRequest::__construct
+ * @covers \CrowdSec\Common\Client\HttpMessage\AppSecRequest::getRawBody
  * @covers \CrowdSec\Common\Client\HttpMessage\AbstractMessage::getHeaders
  */
 final class RequestTest extends TestCase
@@ -71,44 +74,49 @@ final class RequestTest extends TestCase
             'Request headers should be set'
         );
 
-        $request = new Request(
+        $request = new AppSecRequest(
             'test-uri',
             'POST',
-            ['test' => 'test', 'User-Agent' => TestConstants::USER_AGENT_SUFFIX],
-            ['foo' => 'bar'],
-            'app_sec'
+            ['test' => 'test'],
+            'this is raw body'
         );
 
         $headers = $request->getHeaders();
         $params = $request->getParams();
         $method = $request->getMethod();
         $uri = $request->getUri();
+        $rawBody = $request->getRawBody();
 
         $this->assertEquals(
             'POST',
             $method,
-            'Request method should be set'
+            'AppSecRequest method should be set'
         );
 
         $this->assertEquals(
             'test-uri',
             $uri,
-            'Request URI should be set'
+            'AppSecRequest URI should be set'
         );
 
         $this->assertEquals(
-            ['foo' => 'bar'],
+            [],
             $params,
-            'Request params should be set'
+            'AppSecRequest params should be empty'
+        );
+
+        $this->assertEquals(
+            'this is raw body',
+            $rawBody,
+            'AppSecRequest rawBody should be set'
         );
 
         $this->assertEquals(
             [
-                'User-Agent' => TestConstants::USER_AGENT_SUFFIX,
                 'test' => 'test',
             ],
             $headers,
-            'Request headers should be set without Content-Type and Accept'
+            'AppSecRequest headers should be set without Content-Type and Accept'
         );
     }
 }

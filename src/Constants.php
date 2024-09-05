@@ -57,6 +57,10 @@ class Constants
      */
     public const ORIGIN_LISTS = 'lists';
     /**
+     * @var string The CrowdSec App Sec raw body param
+     */
+    public const APPSEC_RAW_BODY_PARAM = 'app_sec_raw_body';
+    /**
      * @var string The ban remediation
      */
     public const REMEDIATION_BAN = 'ban';

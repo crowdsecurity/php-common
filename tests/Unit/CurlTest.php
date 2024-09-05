@@ -16,6 +16,7 @@ namespace CrowdSec\Common\Tests\Unit;
  */
 
 use CrowdSec\Common\Client\ClientException;
+use CrowdSec\Common\Client\HttpMessage\AppSecRequest;
 use CrowdSec\Common\Client\HttpMessage\Request;
 use CrowdSec\Common\Client\HttpMessage\Response;
 use CrowdSec\Common\Client\RequestHandler\Curl;
@@ -27,6 +28,7 @@ use CrowdSec\Common\Tests\PHPUnitUtil;
 /**
  * @uses \CrowdSec\Common\Client\AbstractClient
  * @uses \CrowdSec\Common\Client\HttpMessage\Request
+ * @uses \CrowdSec\Common\Client\HttpMessage\AppSecRequest
  * @uses \CrowdSec\Common\Client\HttpMessage\Response
  * @uses \CrowdSec\Common\Client\HttpMessage\AbstractMessage
  *
@@ -34,7 +36,8 @@ use CrowdSec\Common\Tests\PHPUnitUtil;
  * @covers \CrowdSec\Common\Client\RequestHandler\Curl::handle
  * @covers \CrowdSec\Common\Client\RequestHandler\AbstractRequestHandler::__construct
  * @covers \CrowdSec\Common\Client\RequestHandler\AbstractRequestHandler::getConfig
- * @covers \CrowdSec\Common\Client\RequestHandler\Curl::handleConfigs
+ * @covers \CrowdSec\Common\Client\RequestHandler\Curl::handleSSL
+ * @covers \CrowdSec\Common\Client\RequestHandler\Curl::handleTimeout
  * @covers \CrowdSec\Common\Client\RequestHandler\Curl::handleMethod
  */
 final class CurlTest extends AbstractClient
@@ -265,6 +268,80 @@ final class CurlTest extends AbstractClient
             $expected,
             $curlOptions,
             'Curl options must be as expected for DELETE'
+        );
+    }
+
+    public function testOptionsForAppSec()
+    {
+        $url = TestConstants::APPSEC_URL . '/';
+        $method = 'POST';
+        $headers = ['X-Crowdsec-Appsec-test' => 'test-value'];
+        $rawBody = 'this is raw body';
+        $configs = $this->tlsConfigs;
+
+        $curlRequester = new Curl($configs);
+        $request = new AppSecRequest($url, 'POST', $headers, $rawBody);
+
+        $curlOptions = PHPUnitUtil::callMethod(
+            $curlRequester,
+            'createOptions',
+            [$request]
+        );
+        $expected = [
+            \CURLOPT_HEADER => false,
+            \CURLOPT_RETURNTRANSFER => true,
+            \CURLOPT_HTTPHEADER => [
+                'X-Crowdsec-Appsec-test:test-value',
+            ],
+            \CURLOPT_POST => true,
+            \CURLOPT_POSTFIELDS => 'this is raw body',
+            \CURLOPT_URL => $url,
+            \CURLOPT_CUSTOMREQUEST => $method,
+            \CURLOPT_TIMEOUT => TestConstants::API_TIMEOUT,
+            \CURLOPT_CONNECTTIMEOUT => Constants::API_CONNECT_TIMEOUT,
+            \CURLOPT_SSL_VERIFYPEER => false,
+            \CURLOPT_ENCODING => '',
+        ];
+
+        $this->assertEquals(
+            $expected,
+            $curlOptions,
+            'Curl options must be as expected for POST'
+        );
+
+        $method = 'GET';
+        $curlRequester = new Curl($configs);
+
+        $request = new AppSecRequest($url, $method, array_merge($headers, ['User-Agent' => TestConstants::USER_AGENT_SUFFIX]));
+
+        $curlOptions = PHPUnitUtil::callMethod(
+            $curlRequester,
+            'createOptions',
+            [$request]
+        );
+
+        $expected = [
+            \CURLOPT_HEADER => false,
+            \CURLOPT_RETURNTRANSFER => true,
+            \CURLOPT_USERAGENT => TestConstants::USER_AGENT_SUFFIX,
+            \CURLOPT_HTTPHEADER => [
+                'X-Crowdsec-Appsec-test:test-value',
+                'User-Agent:' . TestConstants::USER_AGENT_SUFFIX,
+            ],
+            \CURLOPT_POST => false,
+            \CURLOPT_HTTPGET => true,
+            \CURLOPT_URL => $url,
+            \CURLOPT_CUSTOMREQUEST => $method,
+            \CURLOPT_TIMEOUT => TestConstants::API_TIMEOUT,
+            \CURLOPT_CONNECTTIMEOUT => Constants::API_CONNECT_TIMEOUT,
+            \CURLOPT_SSL_VERIFYPEER => false,
+            \CURLOPT_ENCODING => '',
+        ];
+
+        $this->assertEquals(
+            $expected,
+            $curlOptions,
+            'Curl options must be as expected for GET'
         );
     }
 }

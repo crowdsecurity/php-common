@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CrowdSec\Common\Client\RequestHandler;
 
 use CrowdSec\Common\Client\ClientException;
+use CrowdSec\Common\Client\HttpMessage\AppSecRequest;
 use CrowdSec\Common\Client\HttpMessage\Request;
 use CrowdSec\Common\Client\HttpMessage\Response;
 use CrowdSec\Common\Constants;
@@ -62,22 +63,9 @@ class Curl extends AbstractRequestHandler
         return curl_getinfo($handle, \CURLINFO_HTTP_CODE);
     }
 
-    private function handleConfigs(): array
+    private function handleTimeout(): array
     {
-        $result = [\CURLOPT_SSL_VERIFYPEER => false];
-        $authType = $this->getConfig('auth_type');
-        if ($authType && Constants::AUTH_TLS === $authType) {
-            $verifyPeer = $this->getConfig('tls_verify_peer') ?? true;
-            $result[\CURLOPT_SSL_VERIFYPEER] = $verifyPeer;
-            // The --cert option
-            $result[\CURLOPT_SSLCERT] = $this->getConfig('tls_cert_path') ?? '';
-            // The --key option
-            $result[\CURLOPT_SSLKEY] = $this->getConfig('tls_key_path') ?? '';
-            if ($verifyPeer) {
-                // The --cacert option
-                $result[\CURLOPT_CAINFO] = $this->getConfig('tls_ca_cert_path') ?? '';
-            }
-        }
+        $result = [];
         $timeout = $this->getConfig('api_timeout') ?? Constants::API_TIMEOUT;
         /**
          * To obtain an unlimited timeout, we don't pass the option (as it is the default behavior).
@@ -100,13 +88,38 @@ class Curl extends AbstractRequestHandler
         return $result;
     }
 
-    private function handleMethod(string $method, string $url, array $parameters = []): array
+    private function handleSSL(Request $request): array
+    {
+        $result = [\CURLOPT_SSL_VERIFYPEER => false];
+        if ($request instanceof AppSecRequest) {
+            // AppSec does not require SSL verification
+            return $result;
+        }
+
+        $authType = $this->getConfig('auth_type');
+        if ($authType && Constants::AUTH_TLS === $authType) {
+            $verifyPeer = $this->getConfig('tls_verify_peer') ?? true;
+            $result[\CURLOPT_SSL_VERIFYPEER] = $verifyPeer;
+            // The --cert option
+            $result[\CURLOPT_SSLCERT] = $this->getConfig('tls_cert_path') ?? '';
+            // The --key option
+            $result[\CURLOPT_SSLKEY] = $this->getConfig('tls_key_path') ?? '';
+            if ($verifyPeer) {
+                // The --cacert option
+                $result[\CURLOPT_CAINFO] = $this->getConfig('tls_ca_cert_path') ?? '';
+            }
+        }
+
+        return $result;
+    }
+
+    private function handleMethod(string $method, string $url, array $parameters = [], $rawBody = ''): array
     {
         $result = [];
         if ('POST' === strtoupper($method)) {
             $result[\CURLOPT_POST] = true;
             $result[\CURLOPT_CUSTOMREQUEST] = 'POST';
-            $result[\CURLOPT_POSTFIELDS] = json_encode($parameters);
+            $result[\CURLOPT_POSTFIELDS] = $rawBody ?: json_encode($parameters);
         } elseif ('GET' === strtoupper($method)) {
             $result[\CURLOPT_POST] = false;
             $result[\CURLOPT_CUSTOMREQUEST] = 'GET';
@@ -132,19 +145,27 @@ class Curl extends AbstractRequestHandler
      */
     private function createOptions(Request $request): array
     {
+        $isAppSec = $request instanceof AppSecRequest;
         $headers = $request->getHeaders();
         $method = $request->getMethod();
         $url = $request->getUri();
         $parameters = $request->getParams();
-        if (!isset($headers['User-Agent'])) {
+        if (!isset($headers['User-Agent']) && !$isAppSec) {
             throw new ClientException('User agent is required', 400);
+        }
+        $rawBody = '';
+        if ($isAppSec) {
+            /** @var AppSecRequest $request */
+            $rawBody = $request->getRawBody();
         }
         $options = [
             \CURLOPT_HEADER => false,
             \CURLOPT_RETURNTRANSFER => true,
-            \CURLOPT_USERAGENT => $headers['User-Agent'],
             \CURLOPT_ENCODING => '',
         ];
+        if (isset($headers['User-Agent'])) {
+            $options[\CURLOPT_USERAGENT] = $headers['User-Agent'];
+        }
 
         $options[\CURLOPT_HTTPHEADER] = [];
         foreach ($headers as $key => $values) {
@@ -153,8 +174,9 @@ class Curl extends AbstractRequestHandler
             }
         }
         // We need to keep keys indexes (array_merge not keeping indexes)
-        $options += $this->handleConfigs();
-        $options += $this->handleMethod($method, $url, $parameters);
+        $options += $this->handleSSL($request);
+        $options += $this->handleTimeout();
+        $options += $this->handleMethod($method, $url, $parameters, $rawBody);
 
         return $options;
     }

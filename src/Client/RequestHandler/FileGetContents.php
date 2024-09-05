@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CrowdSec\Common\Client\RequestHandler;
 
 use CrowdSec\Common\Client\ClientException;
+use CrowdSec\Common\Client\HttpMessage\AppSecRequest;
 use CrowdSec\Common\Client\HttpMessage\Request;
 use CrowdSec\Common\Client\HttpMessage\Response;
 use CrowdSec\Common\Constants;
@@ -95,8 +96,14 @@ class FileGetContents extends AbstractRequestHandler
     private function createContextConfig(Request $request): array
     {
         $headers = $request->getHeaders();
-        if (!isset($headers['User-Agent'])) {
+        $isAppSec = $request instanceof AppSecRequest;
+        if (!isset($headers['User-Agent']) && !$isAppSec) {
             throw new ClientException('User agent is required', 400);
+        }
+        $rawBody = '';
+        if ($isAppSec) {
+            /** @var AppSecRequest $request */
+            $rawBody = $request->getRawBody();
         }
         $header = $this->convertHeadersToString($headers);
         $method = $request->getMethod();
@@ -112,24 +119,36 @@ class FileGetContents extends AbstractRequestHandler
             ],
         ];
 
-        $config['ssl'] = ['verify_peer' => false];
+        $config += $this->handleSSL($request);
+
+        if ('POST' === strtoupper($method)) {
+            $config['http']['content'] =
+                $isAppSec ? $rawBody : json_encode($request->getParams());
+        }
+
+        return $config;
+    }
+
+    private function handleSSL(Request $request): array
+    {
+        $result = ['ssl' => ['verify_peer' => false]];
+        if ($request instanceof AppSecRequest) {
+            // AppSec does not require SSL verification
+            return $result;
+        }
         $authType = $this->getConfig('auth_type');
         if ($authType && Constants::AUTH_TLS === $authType) {
             $verifyPeer = $this->getConfig('tls_verify_peer') ?? true;
-            $config['ssl'] = [
+            $result['ssl'] = [
                 'verify_peer' => $verifyPeer,
                 'local_cert' => $this->getConfig('tls_cert_path') ?? '',
                 'local_pk' => $this->getConfig('tls_key_path') ?? '',
             ];
             if ($verifyPeer) {
-                $config['ssl']['cafile'] = $this->getConfig('tls_ca_cert_path') ?? '';
+                $result['ssl']['cafile'] = $this->getConfig('tls_ca_cert_path') ?? '';
             }
         }
 
-        if ('POST' === strtoupper($method)) {
-            $config['http']['content'] = json_encode($request->getParams());
-        }
-
-        return $config;
+        return $result;
     }
 }

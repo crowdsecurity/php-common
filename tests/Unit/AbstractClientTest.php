@@ -38,6 +38,7 @@ use Monolog\Logger;
  * @covers \CrowdSec\Common\Client\RequestHandler\AbstractRequestHandler::getConfig
  * @covers \CrowdSec\Common\Client\AbstractClient::getUrl
  * @covers \CrowdSec\Common\Client\AbstractClient::getFullUrl
+ * @covers \CrowdSec\Common\Client\AbstractClient::getAppSecUrl
  * @covers \CrowdSec\Common\Client\AbstractClient::formatResponseBody
  *
  * @uses \CrowdSec\Common\Client\HttpMessage\Response::__construct
@@ -46,9 +47,11 @@ use Monolog\Logger;
  * @uses \CrowdSec\Common\Logger\FileLog::__construct
  *
  * @covers \CrowdSec\Common\Client\AbstractClient::request
+ * @covers \CrowdSec\Common\Client\AbstractClient::requestAppSec
  * @covers \CrowdSec\Common\Client\AbstractClient::sendRequest
  *
  * @uses \CrowdSec\Common\Client\HttpMessage\Request::__construct
+ * @uses \CrowdSec\Common\Client\HttpMessage\AppSecRequest::__construct
  * @uses \CrowdSec\Common\Logger\AbstractLog::__construct
  * @uses \CrowdSec\Common\Logger\FileLog::buildFileHandler
  */
@@ -129,15 +132,15 @@ final class AbstractClientTest extends TestAbstractClient
             $fullUrl,
             'Full Url should be ok'
         );
-        $fullUrl = PHPUnitUtil::callMethod(
+        $appSecUrl = PHPUnitUtil::callMethod(
             $client,
-            'getFullUrl',
-            ['/test-endpoint', 'app_sec']
+            'getAppSecUrl',
+            []
         );
         $this->assertEquals(
-            Constants::APPSEC_URL . '/test-endpoint',
-            $fullUrl,
-            'Full Url should be ok for AppSec'
+            Constants::APPSEC_URL . '/',
+            $appSecUrl,
+            'App Sec Url should be ok'
         );
         // formatResponseBody
         $jsonBody = json_encode(['message' => 'ok']);
@@ -319,6 +322,50 @@ final class AbstractClientTest extends TestAbstractClient
                 $client,
                 'request',
                 ['PUT', '/watcher']
+            );
+        } catch (ClientException $e) {
+            $error = $e->getMessage();
+        }
+
+        PHPUnitUtil::assertRegExp(
+            $this,
+            '/Method \(PUT\) is not allowed/',
+            $error,
+            'Not allowed method should throw error'
+        );
+    }
+
+    public function testSendAppSecRequest()
+    {
+        $configs = $this->configs;
+        $requestHandler = $this->getCurlMock(['handle']);
+
+        $client = $this->getMockForAbstractClass(AbstractClient::class, [$configs, $requestHandler]);
+
+        $response = new Response(MockedData::APPSEC_ALLOWED, 200);
+
+        $requestHandler->method('handle')->willReturn(
+            $response
+        );
+
+        $decodedResponse = PHPUnitUtil::callMethod(
+            $client,
+            'requestAppSec',
+            ['POST', ['test' => 'test'], 'this is a raw body']
+        );
+
+        $this->assertEquals(
+            json_decode(MockedData::APPSEC_ALLOWED, true),
+            $decodedResponse,
+            'Decoded response should be correct'
+        );
+
+        $error = false;
+        try {
+            PHPUnitUtil::callMethod(
+                $client,
+                'requestAppSec',
+                ['PUT', ['test' => 'test'], 'this is a raw body']
             );
         } catch (ClientException $e) {
             $error = $e->getMessage();
