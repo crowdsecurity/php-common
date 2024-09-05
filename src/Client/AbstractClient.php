@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace CrowdSec\Common\Client;
 
+use CrowdSec\Common\Client\HttpMessage\AppSecRequest;
 use CrowdSec\Common\Client\HttpMessage\Request;
 use CrowdSec\Common\Client\HttpMessage\Response;
 use CrowdSec\Common\Client\RequestHandler\Curl;
 use CrowdSec\Common\Client\RequestHandler\RequestHandlerInterface;
-use CrowdSec\Common\Constants;
 use Monolog\Handler\NullHandler;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
@@ -34,6 +34,10 @@ abstract class AbstractClient
      */
     private $allowedMethods = ['POST', 'GET', 'DELETE'];
     /**
+     * @var string[]
+     */
+    private $allowedAppSecMethods = ['POST', 'GET'];
+    /**
      * @var LoggerInterface
      */
     protected $logger;
@@ -53,7 +57,7 @@ abstract class AbstractClient
     public function __construct(
         array $configs,
         ?RequestHandlerInterface $requestHandler = null,
-        ?LoggerInterface $logger = null
+        ?LoggerInterface $logger = null,
     ) {
         $this->configs = $configs;
         $this->requestHandler = ($requestHandler) ?: new Curl($this->configs);
@@ -88,11 +92,14 @@ abstract class AbstractClient
         return $this->requestHandler;
     }
 
-    public function getUrl(string $type = Constants::TYPE_REST): string
+    public function getUrl(): string
     {
-        $url = Constants::TYPE_APPSEC === $type ? $this->appSecUrl : $this->url;
+        return rtrim($this->url, '/') . '/';
+    }
 
-        return rtrim($url, '/') . '/';
+    public function getAppSecUrl(): string
+    {
+        return rtrim($this->appSecUrl, '/') . '/';
     }
 
     /**
@@ -105,7 +112,6 @@ abstract class AbstractClient
         string $endpoint,
         array $parameters = [],
         array $headers = [],
-        string $type = Constants::TYPE_REST
     ): array {
         $method = strtoupper($method);
         if (!in_array($method, $this->allowedMethods)) {
@@ -115,7 +121,31 @@ abstract class AbstractClient
         }
 
         $response = $this->sendRequest(
-            new Request($this->getFullUrl($endpoint, $type), $method, $headers, $parameters)
+            new Request($this->getFullUrl($endpoint), $method, $headers, $parameters)
+        );
+
+        return $this->formatResponseBody($response);
+    }
+
+    /**
+     * Performs an HTTP request (POST, GET) to AppSec and returns its response body as an array.
+     *
+     * @throws ClientException
+     */
+    protected function requestAppSec(
+        string $method,
+        array $headers = [],
+        string $rawBody = '',
+    ): array {
+        $method = strtoupper($method);
+        if (!in_array($method, $this->allowedAppSecMethods)) {
+            $message = "Method ($method) is not allowed.";
+            $this->logger->error($message, ['type' => 'CLIENT_APPSEC_REQUEST']);
+            throw new ClientException($message);
+        }
+
+        $response = $this->sendRequest(
+            new AppSecRequest($this->getAppSecUrl(), $method, $headers, $rawBody)
         );
 
         return $this->formatResponseBody($response);
@@ -160,8 +190,8 @@ abstract class AbstractClient
         return $decoded;
     }
 
-    private function getFullUrl(string $endpoint, string $type = Constants::TYPE_REST): string
+    private function getFullUrl(string $endpoint): string
     {
-        return $this->getUrl($type) . ltrim($endpoint, '/');
+        return $this->getUrl() . ltrim($endpoint, '/');
     }
 }

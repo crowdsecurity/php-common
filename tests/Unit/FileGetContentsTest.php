@@ -18,6 +18,7 @@ namespace CrowdSec\Common\Tests\Unit;
  */
 
 use CrowdSec\Common\Client\ClientException;
+use CrowdSec\Common\Client\HttpMessage\AppSecRequest;
 use CrowdSec\Common\Client\HttpMessage\Request;
 use CrowdSec\Common\Client\RequestHandler\FileGetContents;
 use CrowdSec\Common\Constants;
@@ -27,10 +28,12 @@ use CrowdSec\Common\Tests\PHPUnitUtil;
 /**
  * @uses \CrowdSec\Common\Client\AbstractClient
  * @uses \CrowdSec\Common\Client\HttpMessage\Request
+ * @uses \CrowdSec\Common\Client\HttpMessage\AppSecRequest
  * @uses \CrowdSec\Common\Client\HttpMessage\Response
  * @uses \CrowdSec\Common\Client\HttpMessage\AbstractMessage
  *
  * @covers \CrowdSec\Common\Client\RequestHandler\FileGetContents::handle
+ * @covers \CrowdSec\Common\Client\RequestHandler\FileGetContents::handleSSL
  * @covers \CrowdSec\Common\Client\RequestHandler\FileGetContents::createContextConfig
  * @covers \CrowdSec\Common\Client\RequestHandler\FileGetContents::convertHeadersToString
  * @covers \CrowdSec\Common\Client\RequestHandler\FileGetContents::getResponseHttpCode
@@ -151,6 +154,78 @@ User-Agent: ' . TestConstants::USER_AGENT_SUFFIX . '
             $expected,
             $contextConfig,
             'Context config must be as expected for POST'
+        );
+    }
+
+    public function testContextConfigForAppSec()
+    {
+        $method = 'POST';
+        $headers = ['X-CrowdSec-AppSec-test' => 'test-value'];
+        $rawBody = 'This is a raw body';
+        $configs = $this->tlsConfigs;
+
+        $fgcRequester = new FileGetContents($configs);
+
+        $request = new AppSecRequest('test-url', $method, $headers, $rawBody);
+
+        $contextConfig = PHPUnitUtil::callMethod(
+            $fgcRequester,
+            'createContextConfig',
+            [$request]
+        );
+
+        $contextConfig['http']['header'] = str_replace("\r", '', $contextConfig['http']['header']);
+
+        $expected = [
+            'http' => [
+                'method' => $method,
+                'header' => 'X-CrowdSec-AppSec-test: test-value
+',
+                'ignore_errors' => true,
+                'content' => 'This is a raw body',
+                'timeout' => TestConstants::API_TIMEOUT,
+            ],
+            'ssl' => [
+                'verify_peer' => false,
+            ],
+        ];
+
+        $this->assertEquals(
+            $expected,
+            $contextConfig,
+            'Context config must be as expected for POST'
+        );
+
+        $method = 'GET';
+
+        $request = new AppSecRequest('test-url', $method, array_merge($headers, ['User-Agent' => TestConstants::USER_AGENT_SUFFIX]));
+
+        $contextConfig = PHPUnitUtil::callMethod(
+            $fgcRequester,
+            'createContextConfig',
+            [$request]
+        );
+
+        $contextConfig['http']['header'] = str_replace("\r", '', $contextConfig['http']['header']);
+
+        $expected = [
+            'http' => [
+                'method' => $method,
+                'header' => 'X-CrowdSec-AppSec-test: test-value
+User-Agent: ' . TestConstants::USER_AGENT_SUFFIX . '
+',
+                'ignore_errors' => true,
+                'timeout' => TestConstants::API_TIMEOUT,
+            ],
+            'ssl' => [
+                'verify_peer' => false,
+            ],
+        ];
+
+        $this->assertEquals(
+            $expected,
+            $contextConfig,
+            'Context config must be as expected for GET'
         );
     }
 
