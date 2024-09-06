@@ -49,6 +49,19 @@ class FileGetContents extends AbstractRequestHandler
     }
 
     /**
+     * Convert a key-value array of headers to the official HTTP header string.
+     */
+    protected function convertHeadersToString(array $headers): string
+    {
+        $builtHeaderString = '';
+        foreach ($headers as $key => $value) {
+            $builtHeaderString .= "$key: $value\r\n";
+        }
+
+        return $builtHeaderString;
+    }
+
+    /**
      * @codeCoverageIgnore
      *
      * @param resource $context
@@ -74,19 +87,6 @@ class FileGetContents extends AbstractRequestHandler
     }
 
     /**
-     * Convert a key-value array of headers to the official HTTP header string.
-     */
-    protected function convertHeadersToString(array $headers): string
-    {
-        $builtHeaderString = '';
-        foreach ($headers as $key => $value) {
-            $builtHeaderString .= "$key: $value\r\n";
-        }
-
-        return $builtHeaderString;
-    }
-
-    /**
      * Retrieve configuration for the stream content.
      *
      * @return array|array[]
@@ -95,11 +95,8 @@ class FileGetContents extends AbstractRequestHandler
      */
     private function createContextConfig(Request $request): array
     {
-        $headers = $request->getHeaders();
+        $headers = $request->getValidatedHeaders();
         $isAppSec = $request instanceof AppSecRequest;
-        if (!isset($headers['User-Agent']) && !$isAppSec) {
-            throw new ClientException('User agent is required', 400);
-        }
         $rawBody = '';
         if ($isAppSec) {
             /** @var AppSecRequest $request */
@@ -133,7 +130,11 @@ class FileGetContents extends AbstractRequestHandler
     {
         $result = ['ssl' => ['verify_peer' => false]];
         if ($request instanceof AppSecRequest) {
-            // AppSec does not require SSL verification
+            /**
+             * AppSec does not currently support TLS authentication.
+             *
+             * @see https://github.com/crowdsecurity/crowdsec/issues/3172
+             */
             return $result;
         }
         $authType = $this->getConfig('auth_type');

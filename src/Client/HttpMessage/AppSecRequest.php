@@ -21,6 +21,17 @@ class AppSecRequest extends Request
      */
     protected $headers = [];
     /**
+     * @var string[]
+     */
+    protected $requiredHeaders = [
+        'X-Crowdsec-Appsec-Ip',
+        'X-Crowdsec-Appsec-User-Agent',
+        'X-Crowdsec-Appsec-Verb',
+        'X-Crowdsec-Appsec-Uri',
+        'X-Crowdsec-Appsec-Host',
+        'X-Crowdsec-Appsec-Api-Key',
+    ];
+    /**
      * @var string
      */
     private $rawBody;

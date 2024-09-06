@@ -92,7 +92,11 @@ class Curl extends AbstractRequestHandler
     {
         $result = [\CURLOPT_SSL_VERIFYPEER => false];
         if ($request instanceof AppSecRequest) {
-            // AppSec does not require SSL verification
+            /**
+             * AppSec does not currently support TLS authentication.
+             *
+             * @see https://github.com/crowdsecurity/crowdsec/issues/3172
+             */
             return $result;
         }
 
@@ -113,7 +117,7 @@ class Curl extends AbstractRequestHandler
         return $result;
     }
 
-    private function handleMethod(string $method, string $url, array $parameters = [], $rawBody = ''): array
+    private function handleMethod(string $method, string $url, array $parameters = [], string $rawBody = ''): array
     {
         $result = [];
         if ('POST' === strtoupper($method)) {
@@ -145,19 +149,11 @@ class Curl extends AbstractRequestHandler
      */
     private function createOptions(Request $request): array
     {
-        $isAppSec = $request instanceof AppSecRequest;
-        $headers = $request->getHeaders();
+        $headers = $request->getValidatedHeaders();
         $method = $request->getMethod();
         $url = $request->getUri();
         $parameters = $request->getParams();
-        if (!isset($headers['User-Agent']) && !$isAppSec) {
-            throw new ClientException('User agent is required', 400);
-        }
-        $rawBody = '';
-        if ($isAppSec) {
-            /** @var AppSecRequest $request */
-            $rawBody = $request->getRawBody();
-        }
+        $rawBody = $request instanceof AppSecRequest ? $request->getRawBody() : '';
         $options = [
             \CURLOPT_HEADER => false,
             \CURLOPT_RETURNTRANSFER => true,

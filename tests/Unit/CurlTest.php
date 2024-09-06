@@ -59,7 +59,25 @@ final class CurlTest extends AbstractClient
         $this->assertEquals(400, $code);
 
         $this->assertEquals(
-            'User agent is required',
+            'Header "User-Agent" is required',
+            $error,
+            'Should failed and throw if no user agent'
+        );
+        // Test 1 bis AppSec header required
+        $request = new AppSecRequest('test-uri', 'POST', ['User-Agent' => 'ok']);
+        $error = '';
+        $code = 0;
+        try {
+            $mockCurlRequest->handle($request);
+        } catch (ClientException $e) {
+            $error = $e->getMessage();
+            $code = $e->getCode();
+        }
+
+        $this->assertEquals(400, $code);
+
+        $this->assertEquals(
+            'Header "X-Crowdsec-Appsec-Ip" is required',
             $error,
             'Should failed and throw if no user agent'
         );
@@ -275,7 +293,15 @@ final class CurlTest extends AbstractClient
     {
         $url = TestConstants::APPSEC_URL . '/';
         $method = 'POST';
-        $headers = ['X-Crowdsec-Appsec-test' => 'test-value'];
+        $headers = [
+            'X-Crowdsec-Appsec-Ip' => 'test-value',
+            'X-Crowdsec-Appsec-Host' => 'test-value',
+            'X-Crowdsec-Appsec-User-Agent' => 'test-value',
+            'X-Crowdsec-Appsec-Verb' => 'test-value',
+            'X-Crowdsec-Appsec-Method' => 'test-value',
+            'X-Crowdsec-Appsec-Uri' => 'test-value',
+            'X-Crowdsec-Appsec-Api-Key' => 'test-value',
+        ];
         $rawBody = 'this is raw body';
         $configs = $this->tlsConfigs;
 
@@ -291,7 +317,13 @@ final class CurlTest extends AbstractClient
             \CURLOPT_HEADER => false,
             \CURLOPT_RETURNTRANSFER => true,
             \CURLOPT_HTTPHEADER => [
-                'X-Crowdsec-Appsec-test:test-value',
+                'X-Crowdsec-Appsec-Ip:test-value',
+                'X-Crowdsec-Appsec-Host:test-value',
+                'X-Crowdsec-Appsec-User-Agent:test-value',
+                'X-Crowdsec-Appsec-Verb:test-value',
+                'X-Crowdsec-Appsec-Method:test-value',
+                'X-Crowdsec-Appsec-Uri:test-value',
+                'X-Crowdsec-Appsec-Api-Key:test-value',
             ],
             \CURLOPT_POST => true,
             \CURLOPT_POSTFIELDS => 'this is raw body',
@@ -325,7 +357,13 @@ final class CurlTest extends AbstractClient
             \CURLOPT_RETURNTRANSFER => true,
             \CURLOPT_USERAGENT => TestConstants::USER_AGENT_SUFFIX,
             \CURLOPT_HTTPHEADER => [
-                'X-Crowdsec-Appsec-test:test-value',
+                'X-Crowdsec-Appsec-Ip:test-value',
+                'X-Crowdsec-Appsec-Host:test-value',
+                'X-Crowdsec-Appsec-User-Agent:test-value',
+                'X-Crowdsec-Appsec-Verb:test-value',
+                'X-Crowdsec-Appsec-Method:test-value',
+                'X-Crowdsec-Appsec-Uri:test-value',
+                'X-Crowdsec-Appsec-Api-Key:test-value',
                 'User-Agent:' . TestConstants::USER_AGENT_SUFFIX,
             ],
             \CURLOPT_POST => false,

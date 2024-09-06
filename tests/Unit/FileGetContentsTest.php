@@ -160,7 +160,15 @@ User-Agent: ' . TestConstants::USER_AGENT_SUFFIX . '
     public function testContextConfigForAppSec()
     {
         $method = 'POST';
-        $headers = ['X-CrowdSec-AppSec-test' => 'test-value'];
+        $headers = [
+            'X-Crowdsec-Appsec-Ip' => 'test-value',
+            'X-Crowdsec-Appsec-Host' => 'test-value',
+            'X-Crowdsec-Appsec-User-Agent' => 'test-value',
+            'X-Crowdsec-Appsec-Verb' => 'test-value',
+            'X-Crowdsec-Appsec-Method' => 'test-value',
+            'X-Crowdsec-Appsec-Uri' => 'test-value',
+            'X-Crowdsec-Appsec-Api-Key' => 'test-value',
+        ];
         $rawBody = 'This is a raw body';
         $configs = $this->tlsConfigs;
 
@@ -179,7 +187,13 @@ User-Agent: ' . TestConstants::USER_AGENT_SUFFIX . '
         $expected = [
             'http' => [
                 'method' => $method,
-                'header' => 'X-CrowdSec-AppSec-test: test-value
+                'header' => 'X-Crowdsec-Appsec-Ip: test-value
+X-Crowdsec-Appsec-Host: test-value
+X-Crowdsec-Appsec-User-Agent: test-value
+X-Crowdsec-Appsec-Verb: test-value
+X-Crowdsec-Appsec-Method: test-value
+X-Crowdsec-Appsec-Uri: test-value
+X-Crowdsec-Appsec-Api-Key: test-value
 ',
                 'ignore_errors' => true,
                 'content' => 'This is a raw body',
@@ -211,7 +225,13 @@ User-Agent: ' . TestConstants::USER_AGENT_SUFFIX . '
         $expected = [
             'http' => [
                 'method' => $method,
-                'header' => 'X-CrowdSec-AppSec-test: test-value
+                'header' => 'X-Crowdsec-Appsec-Ip: test-value
+X-Crowdsec-Appsec-Host: test-value
+X-Crowdsec-Appsec-User-Agent: test-value
+X-Crowdsec-Appsec-Verb: test-value
+X-Crowdsec-Appsec-Method: test-value
+X-Crowdsec-Appsec-Uri: test-value
+X-Crowdsec-Appsec-Api-Key: test-value
 User-Agent: ' . TestConstants::USER_AGENT_SUFFIX . '
 ',
                 'ignore_errors' => true,
@@ -242,7 +262,21 @@ User-Agent: ' . TestConstants::USER_AGENT_SUFFIX . '
         }
 
         $this->assertEquals(
-            'User agent is required',
+            'Header "User-Agent" is required',
+            $error,
+            'Should failed and throw if no user agent'
+        );
+
+        $request = new AppSecRequest('test-uri', 'POST', ['User-Agent' => 'test']);
+        $error = false;
+        try {
+            $mockFGCRequest->handle($request);
+        } catch (ClientException $e) {
+            $error = $e->getMessage();
+        }
+
+        $this->assertEquals(
+            'Header "X-Crowdsec-Appsec-Ip" is required',
             $error,
             'Should failed and throw if no user agent'
         );
