@@ -20,7 +20,7 @@ As far as possible, we try to adhere to [Symfony guidelines](https://symfony.com
 
 ### Added
 
-- Add App Sec requests support
+- Add AppSec requests support
 
 
 ---

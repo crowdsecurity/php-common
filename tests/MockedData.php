@@ -35,6 +35,6 @@ EOT;
 EOT;
 
     public const APPSEC_ALLOWED = <<<EOT
-{"action":"allow"}
+{"action":"allow","http_status":200}
 EOT;
 }

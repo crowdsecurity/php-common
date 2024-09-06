@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace CrowdSec\Common\Client\HttpMessage;
 
+use CrowdSec\Common\Constants;
+
 /**
  * Request that will be sent to CrowdSec AppSec component.
  *
@@ -24,12 +26,12 @@ class AppSecRequest extends Request
      * @var string[]
      */
     protected $requiredHeaders = [
-        'X-Crowdsec-Appsec-Ip',
-        'X-Crowdsec-Appsec-User-Agent',
-        'X-Crowdsec-Appsec-Verb',
-        'X-Crowdsec-Appsec-Uri',
-        'X-Crowdsec-Appsec-Host',
-        'X-Crowdsec-Appsec-Api-Key',
+        Constants::HEADER_APPSEC_IP,
+        Constants::HEADER_APPSEC_USER_AGENT,
+        Constants::HEADER_APPSEC_VERB,
+        Constants::HEADER_APPSEC_URI,
+        Constants::HEADER_APPSEC_HOST,
+        Constants::HEADER_APPSEC_API_KEY,
     ];
     /**
      * @var string

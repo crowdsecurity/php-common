@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CrowdSec\Common\Client\HttpMessage;
 
 use CrowdSec\Common\Client\ClientException;
+use CrowdSec\Common\Constants;
 
 /**
  * Request that will be sent to CrowdSec.
@@ -29,7 +30,7 @@ class Request extends AbstractMessage
      * @var string[]
      */
     protected $requiredHeaders = [
-        'User-Agent',
+        Constants::HEADER_LAPI_USER_AGENT,
     ];
     /**
      * @var string

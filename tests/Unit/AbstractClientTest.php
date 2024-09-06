@@ -140,7 +140,7 @@ final class AbstractClientTest extends TestAbstractClient
         $this->assertEquals(
             Constants::APPSEC_URL . '/',
             $appSecUrl,
-            'App Sec Url should be ok'
+            'AppSec Url should be ok'
         );
         // formatResponseBody
         $jsonBody = json_encode(['message' => 'ok']);

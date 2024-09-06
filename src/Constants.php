@@ -41,6 +41,38 @@ class Constants
      */
     public const DURATION = 86400;
     /**
+     * @var string The AppSec API key header name
+     */
+    public const HEADER_APPSEC_API_KEY = 'X-Crowdsec-Appsec-Api-Key';
+    /**
+     * @var string The AppSec host header name
+     */
+    public const HEADER_APPSEC_HOST = 'X-Crowdsec-Appsec-Host';
+    /**
+     * @var string The AppSec IP header name
+     */
+    public const HEADER_APPSEC_IP = 'X-Crowdsec-Appsec-Ip';
+    /**
+     * @var string The AppSec URI header name
+     */
+    public const HEADER_APPSEC_URI = 'X-Crowdsec-Appsec-Uri';
+    /**
+     * @var string The AppSec User-Agent header name
+     */
+    public const HEADER_APPSEC_USER_AGENT = 'X-Crowdsec-Appsec-User-Agent';
+    /**
+     * @var string The AppSec verb header name
+     */
+    public const HEADER_APPSEC_VERB = 'X-Crowdsec-Appsec-Verb';
+    /**
+     * @var string The LAPI API key header name
+     */
+    public const HEADER_LAPI_API_KEY = 'X-Api-Key';
+    /**
+     * @var string The LAPI User-Agent header name
+     */
+    public const HEADER_LAPI_USER_AGENT = 'User-Agent';
+    /**
      * @var string The ISO8601 date regex
      */
     public const ISO8601_REGEX = '#^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(.\d{6})?Z$#';
