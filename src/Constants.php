@@ -81,6 +81,10 @@ class Constants
      */
     public const ORIGIN = 'crowdsec';
     /**
+     * @var string The AppSec origin for decisions
+     */
+    public const ORIGIN_APPSEC = 'appsec';
+    /**
      * @var string The CAPI origin for decisions
      */
     public const ORIGIN_CAPI = 'capi';
