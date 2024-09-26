@@ -8,6 +8,7 @@ use CrowdSec\Common\Client\ClientException;
 use CrowdSec\Common\Client\HttpMessage\AppSecRequest;
 use CrowdSec\Common\Client\HttpMessage\Request;
 use CrowdSec\Common\Client\HttpMessage\Response;
+use CrowdSec\Common\Client\TimeoutException;
 use CrowdSec\Common\Constants;
 
 /**
@@ -22,6 +23,10 @@ use CrowdSec\Common\Constants;
  */
 class Curl extends AbstractRequestHandler
 {
+    /**
+     * @throws ClientException
+     * @throws TimeoutException
+     */
     public function handle(Request $request): Response
     {
         $handle = curl_init();
@@ -32,7 +37,12 @@ class Curl extends AbstractRequestHandler
         $response = $this->exec($handle);
 
         if (false === $response) {
-            throw new ClientException('Unexpected CURL call failure: ' . curl_error($handle), 500);
+            $errorCode = $this->errno($handle);
+            $errorMessage = $this->error($handle);
+            if (\CURLE_OPERATION_TIMEOUTED === $errorCode) {
+                throw new TimeoutException('CURL call timeout: ' . $errorMessage, 500);
+            }
+            throw new ClientException('Unexpected CURL call failure: ' . $errorMessage, 500);
         }
 
         $statusCode = $this->getResponseHttpCode($handle);
@@ -58,24 +68,41 @@ class Curl extends AbstractRequestHandler
     /**
      * @codeCoverageIgnore
      */
+    protected function errno($handle): int
+    {
+        return curl_errno($handle);
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    protected function error($handle): string
+    {
+        return curl_error($handle);
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
     protected function getResponseHttpCode($handle)
     {
         return curl_getinfo($handle, \CURLINFO_HTTP_CODE);
     }
 
-    private function handleTimeout(): array
+    private function handleTimeout(Request $request): array
     {
         $result = [];
-        $timeout = $this->getConfig('api_timeout') ?? Constants::API_TIMEOUT;
+        $timeout = $this->getTimeout($request);
         /**
-         * To obtain an unlimited timeout, we don't pass the option (as it is the default behavior).
+         * To obtain an unlimited timeout (with non-positive value),
+         * we don't pass the option (as unlimited timeout is the default behavior).
          *
          * @see https://curl.se/libcurl/c/CURLOPT_TIMEOUT.html
          */
         if ($timeout > 0) {
             $result[\CURLOPT_TIMEOUT] = $timeout;
         }
-        $connectTimeout = $this->getConfig('api_connect_timeout') ?? Constants::API_CONNECT_TIMEOUT;
+        $connectTimeout = $this->getConnectTimeout($request);
         if ($connectTimeout >= 0) {
             /**
              * 0 means infinite timeout (@see https://www.php.net/manual/en/function.curl-setopt.php.
@@ -171,7 +198,7 @@ class Curl extends AbstractRequestHandler
         }
         // We need to keep keys indexes (array_merge not keeping indexes)
         $options += $this->handleSSL($request);
-        $options += $this->handleTimeout();
+        $options += $this->handleTimeout($request);
         $options += $this->handleMethod($method, $url, $parameters, $rawBody);
 
         return $options;

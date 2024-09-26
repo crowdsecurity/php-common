@@ -148,7 +148,6 @@ To use the [PHPMD](https://github.com/phpmd/phpmd) tool, you can run:
 
 ```bash
 ddev phpmd ./my-code/common/tools/coding-standards phpmd/rulesets.xml ../../src
-
 ```
 
 ##### PHPCS and PHPCBF

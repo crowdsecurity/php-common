@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace CrowdSec\Common\Client\RequestHandler;
 
+use CrowdSec\Common\Client\HttpMessage\AppSecRequest;
+use CrowdSec\Common\Client\HttpMessage\Request;
+use CrowdSec\Common\Constants;
+
 /**
  * Request handler abstraction.
  *
@@ -32,5 +36,29 @@ abstract class AbstractRequestHandler implements RequestHandlerInterface
     public function getConfig(string $name)
     {
         return (isset($this->configs[$name])) ? $this->configs[$name] : null;
+    }
+
+    /**
+     * Retrieve the appropriate timeout value for the current request.
+     */
+    protected function getTimeout(Request $request): int
+    {
+        if ($request instanceof AppSecRequest) {
+            return $this->getConfig('appsec_timeout') ?? Constants::APPSEC_TIMEOUT;
+        }
+
+        return $this->getConfig('api_timeout') ?? Constants::API_TIMEOUT;
+    }
+
+    /**
+     * Retrieve the appropriate connect timeout value for the current request.
+     */
+    protected function getConnectTimeout(Request $request): int
+    {
+        if ($request instanceof AppSecRequest) {
+            return $this->getConfig('appsec_connect_timeout') ?? Constants::APPSEC_CONNECT_TIMEOUT;
+        }
+
+        return $this->getConfig('api_connect_timeout') ?? Constants::API_CONNECT_TIMEOUT;
     }
 }
