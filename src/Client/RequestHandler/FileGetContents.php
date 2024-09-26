@@ -85,7 +85,10 @@ class FileGetContents extends AbstractRequestHandler
      */
     protected function exec(string $url, $context): array
     {
-        return ['response' => file_get_contents($url, false, $context), 'header' => $http_response_header];
+        return [
+            'response' => file_get_contents($url, false, $context),
+            'header' => $http_response_header ?? [],
+        ];
     }
 
     /**
