@@ -390,7 +390,7 @@ User-Agent: ' . TestConstants::USER_AGENT_SUFFIX . '
         $mockFGCRequest->method('exec')
             ->willReturnCallback(function () {
                 // Trigger a warning that will be caught by the method's error handler
-                trigger_error('it appears that request timed out', \E_USER_ERROR);
+                trigger_error('failed to open stream: Connection timed out', \E_USER_ERROR);
 
                 // Simulate a failure response
                 return ['response' => false];
@@ -398,7 +398,36 @@ User-Agent: ' . TestConstants::USER_AGENT_SUFFIX . '
 
         // Test that ClientException is thrown
         $this->expectException(TimeoutException::class);
-        $this->expectExceptionMessage('file_get_contents call timeout: it appears that request timed out');
+        $this->expectExceptionMessage('file_get_contents call timeout: failed to open stream: Connection timed out');
+
+        // Call the handle method
+        $mockFGCRequest->handle($request);
+    }
+
+    public function testHandleThrowsSslTimeoutException()
+    {
+        // Mock the Request object
+        $request = $this->createMock(Request::class);
+        $request->method('getMethod')->willReturn('GET');
+        $request->method('getParams')->willReturn([]);
+        $request->method('getUri')->willReturn('http://example.com');
+
+        // Create an instance of your class
+        $mockFGCRequest = $this->getFGCMock(['exec']);
+
+        // Mock the exec method to trigger a warning and simulate failure
+        $mockFGCRequest->method('exec')
+            ->willReturnCallback(function () {
+                // Trigger a warning that will be caught by the method's error handler
+                trigger_error('SSL: Handshake timed out', \E_USER_ERROR);
+
+                // Simulate a failure response
+                return ['response' => false];
+            });
+
+        // Test that ClientException is thrown
+        $this->expectException(ClientException::class);
+        $this->expectExceptionMessage('Unexpected file_get_contents call failure: SSL: Handshake timed out');
 
         // Call the handle method
         $mockFGCRequest->handle($request);

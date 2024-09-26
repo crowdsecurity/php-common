@@ -55,7 +55,7 @@ class FileGetContents extends AbstractRequestHandler
         // Check for errors
         if (false === $responseBody) {
             // Use error_get_last() to check if it was a timeout error
-            if ($lastError && false !== strpos($lastError, 'timed out')) {
+            if ($this->isTimeoutError($lastError)) {
                 throw new TimeoutException('file_get_contents call timeout: ' . $lastError, 500);
             }
             throw new ClientException('Unexpected file_get_contents call failure: ' . $lastError, 500);
@@ -65,6 +65,15 @@ class FileGetContents extends AbstractRequestHandler
         $status = $this->getResponseHttpCode($parts);
 
         return new Response($responseBody, $status);
+    }
+
+    /**
+     * Check for a timeout error, excluding SSL-related timeouts
+     */
+    private function isTimeoutError($lastError): bool
+    {
+        // Check for a "real" timeout error, excluding SSL-related timeouts
+        return $lastError && false !== strpos($lastError, 'timed out') && false === stripos($lastError, 'SSL');
     }
 
     /**
