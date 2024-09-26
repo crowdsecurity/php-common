@@ -42,6 +42,7 @@ use CrowdSec\Common\Tests\PHPUnitUtil;
  * @covers \CrowdSec\Common\Client\RequestHandler\AbstractRequestHandler::getConfig
  * @covers \CrowdSec\Common\Client\RequestHandler\AbstractRequestHandler::getTimeout
  * @covers \CrowdSec\Common\Client\RequestHandler\FileGetContents::handleTimeout
+ * @covers \CrowdSec\Common\Client\RequestHandler\FileGetContents::isTimeoutError
  */
 final class FileGetContentsTest extends AbstractClient
 {
@@ -200,7 +201,7 @@ X-Crowdsec-Appsec-Api-Key: test-value
 ',
                 'ignore_errors' => true,
                 'content' => 'This is a raw body',
-                'timeout' => TestConstants::APPSEC_TIMEOUT,
+                'timeout' => TestConstants::APPSEC_TIMEOUT_MS / 1000,
             ],
             'ssl' => [
                 'verify_peer' => false,
@@ -238,7 +239,7 @@ X-Crowdsec-Appsec-Api-Key: test-value
 User-Agent: ' . TestConstants::USER_AGENT_SUFFIX . '
 ',
                 'ignore_errors' => true,
-                'timeout' => TestConstants::APPSEC_TIMEOUT,
+                'timeout' => TestConstants::APPSEC_TIMEOUT_MS / 1000,
             ],
             'ssl' => [
                 'verify_peer' => false,

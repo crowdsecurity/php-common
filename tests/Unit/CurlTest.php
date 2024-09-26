@@ -42,6 +42,8 @@ use CrowdSec\Common\Tests\PHPUnitUtil;
  * @covers \CrowdSec\Common\Client\RequestHandler\Curl::handleMethod
  * @covers \CrowdSec\Common\Client\RequestHandler\AbstractRequestHandler::getTimeout
  * @covers \CrowdSec\Common\Client\RequestHandler\AbstractRequestHandler::getConnectTimeout
+ * @covers \CrowdSec\Common\Client\RequestHandler\Curl::getConnectTimeoutOption
+ * @covers \CrowdSec\Common\Client\RequestHandler\Curl::getTimeoutOption
  */
 final class CurlTest extends AbstractClient
 {
@@ -332,8 +334,8 @@ final class CurlTest extends AbstractClient
             \CURLOPT_POSTFIELDS => 'this is raw body',
             \CURLOPT_URL => $url,
             \CURLOPT_CUSTOMREQUEST => $method,
-            \CURLOPT_TIMEOUT => TestConstants::APPSEC_TIMEOUT,
-            \CURLOPT_CONNECTTIMEOUT => Constants::APPSEC_CONNECT_TIMEOUT,
+            \CURLOPT_TIMEOUT_MS => TestConstants::APPSEC_TIMEOUT_MS,
+            \CURLOPT_CONNECTTIMEOUT_MS => Constants::APPSEC_CONNECT_TIMEOUT_MS,
             \CURLOPT_SSL_VERIFYPEER => false,
             \CURLOPT_ENCODING => '',
         ];
@@ -373,8 +375,8 @@ final class CurlTest extends AbstractClient
             \CURLOPT_HTTPGET => true,
             \CURLOPT_URL => $url,
             \CURLOPT_CUSTOMREQUEST => $method,
-            \CURLOPT_TIMEOUT => TestConstants::APPSEC_TIMEOUT,
-            \CURLOPT_CONNECTTIMEOUT => Constants::APPSEC_CONNECT_TIMEOUT,
+            \CURLOPT_TIMEOUT_MS => TestConstants::APPSEC_TIMEOUT_MS,
+            \CURLOPT_CONNECTTIMEOUT_MS => Constants::APPSEC_CONNECT_TIMEOUT_MS,
             \CURLOPT_SSL_VERIFYPEER => false,
             \CURLOPT_ENCODING => '',
         ];

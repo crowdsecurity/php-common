@@ -40,11 +40,12 @@ abstract class AbstractRequestHandler implements RequestHandlerInterface
 
     /**
      * Retrieve the appropriate timeout value for the current request.
+     * The returned value will be used as milliseconds for AppSec requests and as seconds for API requests.
      */
     protected function getTimeout(Request $request): int
     {
         if ($request instanceof AppSecRequest) {
-            return $this->getConfig('appsec_timeout') ?? Constants::APPSEC_TIMEOUT;
+            return $this->getConfig('appsec_timeout') ?? Constants::APPSEC_TIMEOUT_MS;
         }
 
         return $this->getConfig('api_timeout') ?? Constants::API_TIMEOUT;
@@ -56,7 +57,7 @@ abstract class AbstractRequestHandler implements RequestHandlerInterface
     protected function getConnectTimeout(Request $request): int
     {
         if ($request instanceof AppSecRequest) {
-            return $this->getConfig('appsec_connect_timeout') ?? Constants::APPSEC_CONNECT_TIMEOUT;
+            return $this->getConfig('appsec_connect_timeout') ?? Constants::APPSEC_CONNECT_TIMEOUT_MS;
         }
 
         return $this->getConfig('api_connect_timeout') ?? Constants::API_CONNECT_TIMEOUT;

@@ -68,7 +68,7 @@ class FileGetContents extends AbstractRequestHandler
     }
 
     /**
-     * Check for a timeout error, excluding SSL-related timeouts
+     * Check for a timeout error, excluding SSL-related timeouts.
      */
     private function isTimeoutError($lastError): bool
     {
@@ -178,11 +178,16 @@ class FileGetContents extends AbstractRequestHandler
         return $result;
     }
 
+    /**
+     * Value must always be in seconds.
+     * Negative value will result in an unlimited timeout.
+     *
+     * @see https://www.php.net/manual/en/context.http.php#context.http.timeout
+     */
     private function handleTimeout(Request $request): array
     {
         $timeout = $this->getTimeout($request);
-        // Negative value will result in an unlimited timeout
 
-        return ['timeout' => $timeout];
+        return ['timeout' => $request instanceof AppSecRequest ? $timeout / 1000 : $timeout];
     }
 }
