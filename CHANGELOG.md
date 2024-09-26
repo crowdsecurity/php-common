@@ -24,7 +24,8 @@ As far as possible, we try to adhere to [Symfony guidelines](https://symfony.com
 
 ### Changed
 
-- Throws a `CrowdSec\Common\Client\TimeoutException` for `curl` and `file_get_contents`request handlers when a timeout is detected
+- Throws a `CrowdSec\Common\Client\TimeoutException` for `curl` and `file_get_contents` request handlers when a 
+  timeout is detected
 
 ---
 

@@ -10,7 +10,12 @@
 
 - [Local development](#local-development)
   - [DDEV setup](#ddev-setup)
+    - [DDEV installation](#ddev-installation)
+    - [Prepare DDEV PHP environment](#prepare-ddev-php-environment)
   - [DDEV Usage](#ddev-usage)
+    - [Use composer to update or install the lib](#use-composer-to-update-or-install-the-lib)
+    - [Unit test](#unit-test)
+    - [Coding standards](#coding-standards)
 - [Commit message](#commit-message)
   - [Allowed message `type` values](#allowed-message-type-values)
 - [Update documentation table of contents](#update-documentation-table-of-contents)
@@ -246,7 +251,7 @@ npm install -g doctoc
 Then, run it in the documentation folder:
 
 ```bash
-doctoc docs/* --maxlevel 3  
+doctoc docs/* --maxlevel 4  
 ```
 
 
