@@ -131,7 +131,7 @@ class Constants
     /**
      * @var string The current version of this library
      */
-    public const VERSION = 'v2.2.0';
+    public const VERSION = 'v2.3.0';
     /**
      * @var string The version regex
      */
