@@ -96,6 +96,7 @@ class FileGetContents extends AbstractRequestHandler
     {
         return [
             'response' => file_get_contents($url, false, $context),
+            // @phpstan-ignore-next-line (https://github.com/phpstan/phpstan/issues/3213)
             'header' => $http_response_header ?? [],
         ];
     }
