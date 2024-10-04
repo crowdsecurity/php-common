@@ -8,6 +8,7 @@ use CrowdSec\Common\Client\ClientException;
 use CrowdSec\Common\Client\HttpMessage\AppSecRequest;
 use CrowdSec\Common\Client\HttpMessage\Request;
 use CrowdSec\Common\Client\HttpMessage\Response;
+use CrowdSec\Common\Client\TimeoutException;
 use CrowdSec\Common\Constants;
 
 /**
@@ -22,6 +23,10 @@ use CrowdSec\Common\Constants;
  */
 class FileGetContents extends AbstractRequestHandler
 {
+    /**
+     * @throws ClientException
+     * @throws TimeoutException
+     */
     public function handle(Request $request): Response
     {
         $config = $this->createContextConfig($request);
@@ -36,16 +41,39 @@ class FileGetContents extends AbstractRequestHandler
             $url .= http_build_query($parameters);
         }
 
+        $lastError = null;
+        // Set a custom error handler to catch warnings
+        set_error_handler(function ($errno, $errstr) use (&$lastError) {
+            $lastError = $errstr;
+
+            return true;
+        });
         $fullResponse = $this->exec($url, $context);
-        $responseBody = (isset($fullResponse['response'])) ? $fullResponse['response'] : false;
+        // Restore the previous error handler
+        restore_error_handler();
+        $responseBody = $fullResponse['response'] ?? false;
+        // Check for errors
         if (false === $responseBody) {
-            throw new ClientException('Unexpected HTTP call failure.', 500);
+            // Use error_get_last() to check if it was a timeout error
+            if ($this->isTimeoutError($lastError)) {
+                throw new TimeoutException('file_get_contents call timeout: ' . $lastError, 500);
+            }
+            throw new ClientException('Unexpected file_get_contents call failure: ' . $lastError, 500);
         }
         $responseHeaders = (isset($fullResponse['header'])) ? $fullResponse['header'] : [];
         $parts = !empty($responseHeaders) ? explode(' ', $responseHeaders[0]) : [];
         $status = $this->getResponseHttpCode($parts);
 
         return new Response($responseBody, $status);
+    }
+
+    /**
+     * Check for a timeout error, excluding SSL-related timeouts.
+     */
+    private function isTimeoutError($lastError): bool
+    {
+        // Check for a "real" timeout error, excluding SSL-related timeouts
+        return $lastError && false !== strpos($lastError, 'timed out') && false === stripos($lastError, 'SSL');
     }
 
     /**
@@ -63,12 +91,14 @@ class FileGetContents extends AbstractRequestHandler
 
     /**
      * @codeCoverageIgnore
-     *
-     * @param resource $context
      */
     protected function exec(string $url, $context): array
     {
-        return ['response' => file_get_contents($url, false, $context), 'header' => $http_response_header];
+        return [
+            'response' => file_get_contents($url, false, $context),
+            // @phpstan-ignore-next-line (https://github.com/phpstan/phpstan/issues/3213)
+            'header' => $http_response_header ?? [],
+        ];
     }
 
     /**
@@ -104,18 +134,14 @@ class FileGetContents extends AbstractRequestHandler
         }
         $header = $this->convertHeadersToString($headers);
         $method = $request->getMethod();
-        $timeout = $this->getConfig('api_timeout');
-        // Negative value will result in an unlimited timeout
-        $timeout = is_null($timeout) ? Constants::API_TIMEOUT : $timeout;
         $config = [
             'http' => [
                 'method' => $method,
                 'header' => $header,
                 'ignore_errors' => true,
-                'timeout' => $timeout,
             ],
         ];
-
+        $config['http'] += $this->handleTimeout($request);
         $config += $this->handleSSL($request);
 
         if ('POST' === strtoupper($method)) {
@@ -151,5 +177,18 @@ class FileGetContents extends AbstractRequestHandler
         }
 
         return $result;
+    }
+
+    /**
+     * Value must always be in seconds.
+     * Negative value will result in an unlimited timeout.
+     *
+     * @see https://www.php.net/manual/en/context.http.php#context.http.timeout
+     */
+    private function handleTimeout(Request $request): array
+    {
+        $timeout = $this->getTimeout($request);
+
+        return ['timeout' => $request instanceof AppSecRequest ? $timeout / 1000 : $timeout];
     }
 }

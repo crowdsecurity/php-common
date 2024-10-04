@@ -25,6 +25,14 @@ class Constants
      */
     public const API_TIMEOUT = 120;
     /**
+     * @var int the default connection timeout (time of connection phase in milliseconds) when calling AppSec endpoints
+     */
+    public const APPSEC_CONNECT_TIMEOUT_MS = 150;
+    /**
+     * @var int the default timeout (total time of transfer operation in milliseconds) when calling AppSec endpoints
+     */
+    public const APPSEC_TIMEOUT_MS = 400;
+    /**
      * @var string The API-KEY auth type
      */
     public const AUTH_KEY = 'api_key';

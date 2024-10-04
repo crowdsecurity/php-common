@@ -15,13 +15,17 @@ As far as possible, we try to adhere to [Symfony guidelines](https://symfony.com
 ---
 
 ## [2.3.0](https://github.com/crowdsecurity/php-common/releases/tag/v2.3.0) - 2024-??-??
-[_Compare with previous release_](https://github.com/crowdsecurity/php-common/compare/v2.2.0...v2.3.0)
+[_Compare with previous release_](https://github.com/crowdsecurity/php-common/compare/v2.2.0...HEAD)
 
 
 ### Added
 
 - Add AppSec requests support
 
+### Changed
+
+- Throws a `CrowdSec\Common\Client\TimeoutException` for `curl` and `file_get_contents` request handlers when a 
+  timeout is detected
 
 ---
 

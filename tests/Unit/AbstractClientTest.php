@@ -57,7 +57,7 @@ use Monolog\Logger;
  */
 final class AbstractClientTest extends TestAbstractClient
 {
-    protected $configs = ['api_url' => Constants::API_URL, 'app_sec_url' => Constants::APPSEC_URL];
+    protected $configs = ['api_url' => Constants::API_URL, 'appsec_url' => Constants::APPSEC_URL];
 
     public function testConstruct()
     {
@@ -74,7 +74,7 @@ final class AbstractClientTest extends TestAbstractClient
             'Config should be set');
         $this->assertEquals(
             Constants::APPSEC_URL,
-            $client->getConfig('app_sec_url'),
+            $client->getConfig('appsec_url'),
             'Config should be set');
 
         $requestHandler = $client->getRequestHandler();

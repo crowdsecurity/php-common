@@ -62,7 +62,7 @@ abstract class AbstractClient
         $this->configs = $configs;
         $this->requestHandler = ($requestHandler) ?: new Curl($this->configs);
         $this->url = $this->getConfig('api_url');
-        $this->appSecUrl = $this->getConfig('app_sec_url');
+        $this->appSecUrl = $this->getConfig('appsec_url');
         if (!$logger) {
             $logger = new Logger('null');
             $logger->pushHandler(new NullHandler());

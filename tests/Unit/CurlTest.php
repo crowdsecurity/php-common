@@ -20,6 +20,7 @@ use CrowdSec\Common\Client\HttpMessage\AppSecRequest;
 use CrowdSec\Common\Client\HttpMessage\Request;
 use CrowdSec\Common\Client\HttpMessage\Response;
 use CrowdSec\Common\Client\RequestHandler\Curl;
+use CrowdSec\Common\Client\TimeoutException;
 use CrowdSec\Common\Constants;
 use CrowdSec\Common\Tests\Constants as TestConstants;
 use CrowdSec\Common\Tests\MockedData;
@@ -39,6 +40,10 @@ use CrowdSec\Common\Tests\PHPUnitUtil;
  * @covers \CrowdSec\Common\Client\RequestHandler\Curl::handleSSL
  * @covers \CrowdSec\Common\Client\RequestHandler\Curl::handleTimeout
  * @covers \CrowdSec\Common\Client\RequestHandler\Curl::handleMethod
+ * @covers \CrowdSec\Common\Client\RequestHandler\AbstractRequestHandler::getTimeout
+ * @covers \CrowdSec\Common\Client\RequestHandler\AbstractRequestHandler::getConnectTimeout
+ * @covers \CrowdSec\Common\Client\RequestHandler\Curl::getConnectTimeoutOption
+ * @covers \CrowdSec\Common\Client\RequestHandler\Curl::getTimeoutOption
  */
 final class CurlTest extends AbstractClient
 {
@@ -329,8 +334,8 @@ final class CurlTest extends AbstractClient
             \CURLOPT_POSTFIELDS => 'this is raw body',
             \CURLOPT_URL => $url,
             \CURLOPT_CUSTOMREQUEST => $method,
-            \CURLOPT_TIMEOUT => TestConstants::API_TIMEOUT,
-            \CURLOPT_CONNECTTIMEOUT => Constants::API_CONNECT_TIMEOUT,
+            \CURLOPT_TIMEOUT_MS => TestConstants::APPSEC_TIMEOUT_MS,
+            \CURLOPT_CONNECTTIMEOUT_MS => Constants::APPSEC_CONNECT_TIMEOUT_MS,
             \CURLOPT_SSL_VERIFYPEER => false,
             \CURLOPT_ENCODING => '',
         ];
@@ -370,8 +375,8 @@ final class CurlTest extends AbstractClient
             \CURLOPT_HTTPGET => true,
             \CURLOPT_URL => $url,
             \CURLOPT_CUSTOMREQUEST => $method,
-            \CURLOPT_TIMEOUT => TestConstants::API_TIMEOUT,
-            \CURLOPT_CONNECTTIMEOUT => Constants::API_CONNECT_TIMEOUT,
+            \CURLOPT_TIMEOUT_MS => TestConstants::APPSEC_TIMEOUT_MS,
+            \CURLOPT_CONNECTTIMEOUT_MS => Constants::APPSEC_CONNECT_TIMEOUT_MS,
             \CURLOPT_SSL_VERIFYPEER => false,
             \CURLOPT_ENCODING => '',
         ];
@@ -381,5 +386,51 @@ final class CurlTest extends AbstractClient
             $curlOptions,
             'Curl options must be as expected for GET'
         );
+    }
+
+    public function testHandleThrowsTimeoutException()
+    {
+        // Mock the Request object
+        $request = $this->createMock(Request::class);
+        $request->method('getMethod')->willReturn('GET');
+        $request->method('getParams')->willReturn([]);
+        $request->method('getUri')->willReturn('http://example.com');
+
+        $mockCurlRequest = $this->getCurlMock(['exec', 'errno', 'error']);
+
+        $mockCurlRequest->method('exec')->willReturn(false);
+        $mockCurlRequest->method('errno')->willReturn(\CURLE_OPERATION_TIMEOUTED);
+        $mockCurlRequest->method('error')->willReturn('Operation timed out');
+
+        // Test that TimeoutException is thrown
+        $this->expectException(TimeoutException::class);
+        $this->expectExceptionMessage('CURL call timeout: Operation timed out');
+        $this->expectExceptionCode(500);
+
+        // Call the handle method
+        $mockCurlRequest->handle($request);
+    }
+
+    public function testHandleThrowsClientException()
+    {
+        // Mock the Request object
+        $request = $this->createMock(Request::class);
+        $request->method('getMethod')->willReturn('GET');
+        $request->method('getParams')->willReturn([]);
+        $request->method('getUri')->willReturn('http://example.com');
+
+        $mockCurlRequest = $this->getCurlMock(['exec', 'errno', 'error']);
+
+        $mockCurlRequest->method('exec')->willReturn(false);
+        $mockCurlRequest->method('errno')->willReturn(\CURLE_HTTP_POST_ERROR);
+        $mockCurlRequest->method('error')->willReturn('There was an error');
+
+        // Test that ClientException is thrown
+        $this->expectException(ClientException::class);
+        $this->expectExceptionMessage('Unexpected CURL call failure: There was an error');
+        $this->expectExceptionCode(500);
+
+        // Call the handle method
+        $mockCurlRequest->handle($request);
     }
 }

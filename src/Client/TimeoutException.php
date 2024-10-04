@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace CrowdSec\Common\Client;
 
-use CrowdSec\Common\Exception;
-
 /**
  * Class for generic exceptions thrown by CrowdSec client.
  *
@@ -16,6 +14,6 @@ use CrowdSec\Common\Exception;
  * @copyright Copyright (c) 2022+ CrowdSec
  * @license   MIT License
  */
-class ClientException extends Exception
+class TimeoutException extends ClientException
 {
 }
