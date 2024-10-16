@@ -167,8 +167,13 @@ abstract class AbstractClient
     private function formatResponseBody(Response $response, array $mutedCodes = ['404']): array
     {
         $statusCode = $response->getStatusCode();
-
         $body = $response->getJsonBody();
+        if ($statusCode < 200 || $statusCode >= 300) {
+            $message = "Unexpected response status code: $statusCode. Body was: " . str_replace("\n", '', $body);
+            if (!in_array($statusCode, $mutedCodes)) {
+                throw new ClientException($message, $statusCode);
+            }
+        }
         $decoded = [];
         if (!empty($body) && 'null' !== $body) {
             $decoded = json_decode($response->getJsonBody(), true);
@@ -177,13 +182,6 @@ abstract class AbstractClient
                 $message = 'Body response is not a valid json';
                 $this->logger->error($message, ['type' => 'CLIENT_FORMAT_RESPONSE']);
                 throw new ClientException($message);
-            }
-        }
-
-        if ($statusCode < 200 || $statusCode >= 300) {
-            $message = "Unexpected response status code: $statusCode. Body was: " . str_replace("\n", '', $body);
-            if (!in_array($statusCode, $mutedCodes)) {
-                throw new ClientException($message, $statusCode);
             }
         }
 
