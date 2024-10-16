@@ -128,6 +128,7 @@ class FileGetContents extends AbstractRequestHandler
         $headers = $request->getValidatedHeaders();
         /**
          * It's not recommended to set the Host header when using file_get_contents (with follow_location).
+         *
          * @see https://www.php.net/manual/en/context.http.php#context.http.header
          * As it was causing issues with PHP 7.2, we are removing it.
          * For AppSec requests, original host is sent in the X-Crowdsec-Appsec-Host header.
