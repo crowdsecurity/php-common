@@ -4,7 +4,6 @@ name: SDK chain tests
 # - Remediation Engine Lib
 # - LAPI client lib
 # - PHP common lib
-
 on:
   push:
     branches:
@@ -17,22 +16,22 @@ on:
           type: string
           description: The PHP common json data
           required: true
-          default: '["main","crowdsecurity/php-common"]'
+          default: '["main"]'
         lapi_client_json:
           type: string
           description: The LAPI client json to use
           required: true
-          default: '["main","crowdsecurity/php-lapi-client"]'
+          default: '["main"]'
         remediation_engine_json:
           type: string
           description: The Remediation Engine json to use
           required: true
-          default: '["main", "crowdsecurity/php-remediation-engine"]'
+          default: '["main"]'
         bouncer_lib_json:
           type: string
           description: The PHP bouncer library json to use
           required: true
-          default: '["main", "crowdsecurity/php-cs-bouncer"]'
+          default: '["main"]'
 
 permissions:
   contents: read
@@ -41,10 +40,10 @@ env:
   # Allow ddev get to use a GitHub token to prevent rate limiting by tests
   DDEV_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   # The default values are never used but are here to avoid errors
-  PHP_COMMON_JSON: ${{ github.event.inputs.php_common_json || '["branch","repo"]' }}
-  LAPI_CLIENT_JSON: ${{ github.event.inputs.lapi_client_json || '["branch","repo"]' }}
-  REMEDIATION_ENGINE_JSON: ${{ github.event.inputs.remediation_engine_json || '["branch","repo"]' }}
-  BOUNCER_LIB_JSON: ${{ github.event.inputs.bouncer_lib_json || '["branch","repo"]' }}
+  PHP_COMMON_JSON: ${{ github.event.inputs.php_common_json || '["branch"]' }}
+  LAPI_CLIENT_JSON: ${{ github.event.inputs.lapi_client_json || '["branch"]' }}
+  REMEDIATION_ENGINE_JSON: ${{ github.event.inputs.remediation_engine_json || '["branch"]' }}
+  BOUNCER_LIB_JSON: ${{ github.event.inputs.bouncer_lib_json || '["branch"]' }}
 
 jobs:
   prepare-data:
@@ -60,36 +59,36 @@ jobs:
         id: prepare-php-common
         run: |
           if [ "${{ github.event_name }}" == "push" ]; then
-            echo 'json=["${{ github.ref_name }}","crowdsecurity/php-common"]' >> $GITHUB_OUTPUT
+            echo 'json=["${{ github.ref_name }}"]' >> $GITHUB_OUTPUT
           else
-            echo 'json=["${{ fromJson(env.PHP_COMMON_JSON)[0]}}","${{ fromJson(env.PHP_COMMON_JSON)[1]}}"]' >> $GITHUB_OUTPUT
+            echo 'json=["${{ fromJson(env.PHP_COMMON_JSON)[0]}}"]' >> $GITHUB_OUTPUT
           fi
 
       - name: Prepare LAPI client data
         id: prepare-lapi-client
         run: |
           if [ "${{ github.event_name }}" == "push" ]; then
-            echo 'json=["main","crowdsecurity/php-lapi-client"]' >> $GITHUB_OUTPUT
+            echo 'json=["main"]' >> $GITHUB_OUTPUT
           else
-            echo 'json=["${{ fromJson(env.LAPI_CLIENT_JSON)[0]}}","${{ fromJson(env.LAPI_CLIENT_JSON)[1]}}"]' >> $GITHUB_OUTPUT
+            echo 'json=["${{ fromJson(env.LAPI_CLIENT_JSON)[0]}}"]' >> $GITHUB_OUTPUT
           fi
 
       - name: Prepare Remediation Engine data
         id: prepare-remediation-engine
         run: |
           if [ "${{ github.event_name }}" == "push" ]; then
-            echo 'json=["main","crowdsecurity/php-remediation-engine"]' >> $GITHUB_OUTPUT
+            echo 'json=["main"]' >> $GITHUB_OUTPUT
           else
-            echo 'json=["${{ fromJson(env.REMEDIATION_ENGINE_JSON)[0] }}","${{ fromJson(env.REMEDIATION_ENGINE_JSON)[1] }}"]' >> $GITHUB_OUTPUT
+            echo 'json=["${{ fromJson(env.REMEDIATION_ENGINE_JSON)[0] }}"]' >> $GITHUB_OUTPUT
           fi
 
       - name: Prepare Bouncer lib data
         id: prepare-bouncer-lib
         run: |
           if [ "${{ github.event_name }}" == "push" ]; then
-            echo 'json=["main","crowdsecurity/php-cs-bouncer"]' >> $GITHUB_OUTPUT
+            echo 'json=["main"]' >> $GITHUB_OUTPUT
           else
-            echo 'json=["${{ fromJson(env.BOUNCER_LIB_JSON)[0]}}","${{ fromJson(env.BOUNCER_LIB_JSON)[1]}}"]' >> $GITHUB_OUTPUT
+            echo 'json=["${{ fromJson(env.BOUNCER_LIB_JSON)[0]}}"]' >> $GITHUB_OUTPUT
           fi
 
   test-standalone-bouncer:
