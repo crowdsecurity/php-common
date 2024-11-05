@@ -9,29 +9,7 @@ on:
     branches:
       - main
     paths-ignore:
-      - '**.md'
-  workflow_dispatch:
-      inputs:
-        php_common_json:
-          type: string
-          description: The PHP common json data
-          required: true
-          default: '["main"]'
-        lapi_client_json:
-          type: string
-          description: The LAPI client json to use
-          required: true
-          default: '["main"]'
-        remediation_engine_json:
-          type: string
-          description: The Remediation Engine json to use
-          required: true
-          default: '["main"]'
-        bouncer_lib_json:
-          type: string
-          description: The PHP bouncer library json to use
-          required: true
-          default: '["main"]'
+      - "**.md"
 
 permissions:
   contents: read
@@ -39,67 +17,14 @@ permissions:
 env:
   # Allow ddev get to use a GitHub token to prevent rate limiting by tests
   DDEV_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  # The default values are never used but are here to avoid errors
-  PHP_COMMON_JSON: ${{ github.event.inputs.php_common_json || '["branch"]' }}
-  LAPI_CLIENT_JSON: ${{ github.event.inputs.lapi_client_json || '["branch"]' }}
-  REMEDIATION_ENGINE_JSON: ${{ github.event.inputs.remediation_engine_json || '["branch"]' }}
-  BOUNCER_LIB_JSON: ${{ github.event.inputs.bouncer_lib_json || '["branch"]' }}
 
 jobs:
-  prepare-data:
-    name: Prepare data
-    outputs:
-        php_common_json: ${{ steps.prepare-php-common.outputs.json }}
-        lapi_client_json: ${{ steps.prepare-lapi-client.outputs.json }}
-        remediation_engine_json: ${{ steps.prepare-remediation-engine.outputs.json }}
-        bouncer_lib_json: ${{ steps.prepare-bouncer-lib.outputs.json }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Prepare PHP common data
-        id: prepare-php-common
-        run: |
-          if [ "${{ github.event_name }}" == "push" ]; then
-            echo 'json=["${{ github.ref_name }}"]' >> $GITHUB_OUTPUT
-          else
-            echo 'json=["${{ fromJson(env.PHP_COMMON_JSON)[0]}}"]' >> $GITHUB_OUTPUT
-          fi
-
-      - name: Prepare LAPI client data
-        id: prepare-lapi-client
-        run: |
-          if [ "${{ github.event_name }}" == "push" ]; then
-            echo 'json=["main"]' >> $GITHUB_OUTPUT
-          else
-            echo 'json=["${{ fromJson(env.LAPI_CLIENT_JSON)[0]}}"]' >> $GITHUB_OUTPUT
-          fi
-
-      - name: Prepare Remediation Engine data
-        id: prepare-remediation-engine
-        run: |
-          if [ "${{ github.event_name }}" == "push" ]; then
-            echo 'json=["main"]' >> $GITHUB_OUTPUT
-          else
-            echo 'json=["${{ fromJson(env.REMEDIATION_ENGINE_JSON)[0] }}"]' >> $GITHUB_OUTPUT
-          fi
-
-      - name: Prepare Bouncer lib data
-        id: prepare-bouncer-lib
-        run: |
-          if [ "${{ github.event_name }}" == "push" ]; then
-            echo 'json=["main"]' >> $GITHUB_OUTPUT
-          else
-            echo 'json=["${{ fromJson(env.BOUNCER_LIB_JSON)[0]}}"]' >> $GITHUB_OUTPUT
-          fi
-
   test-standalone-bouncer:
-    needs: prepare-data
     name: Run Standalone Bouncer tests
     if: ${{ !contains(github.event.head_commit.message, 'chore(') }}
-    uses: crowdsecurity/cs-standalone-php-bouncer/.github/workflows/php-sdk-development-tests.yml@main
+    uses: crowdsecurity/cs-standalone-php-bouncer/.github/workflows/php-sdk-development-tests.yml@736a2971d93dc6a7e9dc3a73051986b8f7e0b41a
     with:
-      php_common_json: ${{ needs.prepare-data.outputs.php_common_json}}
-      lapi_client_json: ${{ needs.prepare-data.outputs.lapi_client_json }}
-      remediation_engine_json: ${{ needs.prepare-data.outputs.remediation_engine_json }}
-      bouncer_lib_json: ${{ needs.prepare-data.outputs.bouncer_lib_json }}
-
-
+      php_common_json: '["${{ github.ref_name }}"]'
+      lapi_client_json: '["main"]'
+      remediation_engine_json: '["main"]'
+      bouncer_lib_json: '["main"]'
