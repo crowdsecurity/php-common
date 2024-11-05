@@ -32,3 +32,14 @@ jobs:
       php_common_json: '["${{ github.ref_name }}"]'
       lapi_client_json: '["main"]'
       remediation_engine_json: '["main"]'
+
+  test-remediation-engine:
+    name: Run Remediation Engine tests
+    if: ${{ !contains(github.event.head_commit.message, 'chore(') }}
+    uses: crowdsecurity/php-remediation-engine/.github/workflows/php-sdk-development-tests.yml@7b87317cfc5ec3aac6df5e0074ec29665f4811bd
+    with:
+      php_common_json: '["${{ github.ref_name }}"]'
+      lapi_client_json: '["main"]'
+    secrets:
+      TEST_MACHINE_ID: ${{ secrets.REMEDIATION_MACHINE_ID }}
+      TEST_MACHINE_PWD: ${{ secrets.REMEDIATION_MACHINE_PWD }}
