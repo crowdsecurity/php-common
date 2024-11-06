@@ -1,8 +1,6 @@
 name: SDK chain tests
 on:
   push:
-    branches:
-      - main
     paths-ignore:
       - "**.md"
 
