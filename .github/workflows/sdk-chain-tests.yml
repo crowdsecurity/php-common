@@ -48,7 +48,7 @@ jobs:
   test-lapi-client:
     name: Run Lapi client tests
     if: ${{ !contains(github.event.head_commit.message, 'chore(') }}
-    uses: crowdsecurity/php-lapi-client/.github/workflows/php-sdk-development-tests.yml@abf5fac68b433c52cb31477f8c03130c939f8b72
+    uses: crowdsecurity/php-lapi-client/.github/workflows/php-sdk-development-tests.yml@71c7dd6d71691c23bbee2f54f965f324791dbc2b
     with:
       php_common_json: '["${{ github.ref_name }}"]'
 
