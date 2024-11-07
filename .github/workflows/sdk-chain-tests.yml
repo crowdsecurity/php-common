@@ -36,7 +36,7 @@ jobs:
   test-remediation-engine:
     name: Run Remediation Engine tests
     if: ${{ !contains(github.event.head_commit.message, 'chore(') }}
-    uses: crowdsecurity/php-remediation-engine/.github/workflows/php-sdk-development-tests.yml@1ba21c9b35fa85c4bcb8b4c1c31c36f2d6237f73
+    uses: crowdsecurity/php-remediation-engine/.github/workflows/php-sdk-development-tests.yml@main
     with:
       php_common_json: '["${{ github.ref_name }}"]'
       lapi_client_json: '["main"]'
@@ -48,14 +48,14 @@ jobs:
   test-lapi-client:
     name: Run Lapi client tests
     if: ${{ !contains(github.event.head_commit.message, 'chore(') }}
-    uses: crowdsecurity/php-lapi-client/.github/workflows/php-sdk-development-tests.yml@0e1a14b1b5225fb5b6c3e880a0fe20fc3d00ba23
+    uses: crowdsecurity/php-lapi-client/.github/workflows/php-sdk-development-tests.yml@main
     with:
       php_common_json: '["${{ github.ref_name }}"]'
 
   test-capi-client:
     name: Run Capi client tests
     if: ${{ !contains(github.event.head_commit.message, 'chore(') }}
-    uses: crowdsecurity/php-capi-client/.github/workflows/php-sdk-development-tests.yml@7d29f10236fe0a0ba6f9d1c628e4e01e61012fd0
+    uses: crowdsecurity/php-capi-client/.github/workflows/php-sdk-development-tests.yml@main
     with:
       php_common_json: '["${{ github.ref_name }}"]'
     secrets:
@@ -66,7 +66,7 @@ jobs:
   test-magento-engine:
     name: Run Magento 2 Engine module tests
     if: ${{ !contains(github.event.head_commit.message, 'chore(') }}
-    uses: crowdsecurity/magento-cs-extension/.github/workflows/php-sdk-development-tests.yml@cf9e25d0753d46d993d61a9fb8113d7e4f91c31f
+    uses: crowdsecurity/magento-cs-extension/.github/workflows/php-sdk-development-tests.yml@main
     with:
       php_common_json: '["${{ github.ref_name }}"]'
       lapi_client_json: '["main"]'
