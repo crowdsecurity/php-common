@@ -55,7 +55,7 @@ jobs:
   test-capi-client:
     name: Run Capi client tests
     if: ${{ !contains(github.event.head_commit.message, 'chore(') }}
-    uses: crowdsecurity/php-capi-client/.github/workflows/php-sdk-development-tests.yml@870447990b85768b5563594f7a26d7808e813d77
+    uses: crowdsecurity/php-capi-client/.github/workflows/php-sdk-development-tests.yml@7d29f10236fe0a0ba6f9d1c628e4e01e61012fd0
     with:
       php_common_json: '["${{ github.ref_name }}"]'
     secrets:
@@ -66,7 +66,7 @@ jobs:
   test-magento-engine:
     name: Run Magento 2 Engine module tests
     if: ${{ !contains(github.event.head_commit.message, 'chore(') }}
-    uses: crowdsecurity/magento-cs-extension/.github/workflows/php-sdk-development-tests.yml@2e72b75d1fdde083b5ed386fd387ef892ecb47cb
+    uses: crowdsecurity/magento-cs-extension/.github/workflows/php-sdk-development-tests.yml@807feb39613bf7197d12f46bc579ad40daa6a830
     with:
       php_common_json: '["${{ github.ref_name }}"]'
       lapi_client_json: '["main"]'
