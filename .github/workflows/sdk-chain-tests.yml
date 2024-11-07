@@ -66,7 +66,7 @@ jobs:
   test-magento-engine:
     name: Run Magento 2 Engine module tests
     if: ${{ !contains(github.event.head_commit.message, 'chore(') }}
-    uses: crowdsecurity/magento-cs-extension/.github/workflows/php-sdk-development-tests.yml@807feb39613bf7197d12f46bc579ad40daa6a830
+    uses: crowdsecurity/magento-cs-extension/.github/workflows/php-sdk-development-tests.yml@cf9e25d0753d46d993d61a9fb8113d7e4f91c31f
     with:
       php_common_json: '["${{ github.ref_name }}"]'
       lapi_client_json: '["main"]'
