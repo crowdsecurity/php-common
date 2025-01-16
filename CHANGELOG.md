@@ -14,6 +14,16 @@ As far as possible, we try to adhere to [Symfony guidelines](https://symfony.com
 
 ---
 
+## [2.4.0](https://github.com/crowdsecurity/php-common/releases/tag/v2.4.0) - 2025-01-16
+[_Compare with previous release_](https://github.com/crowdsecurity/php-common/compare/v2.3.2...v2.4.0)
+
+
+### Changed
+
+- Allow Symfony 7 packages
+
+---
+
 ## [2.3.2](https://github.com/crowdsecurity/php-common/releases/tag/v2.3.2) - 2024-10-18
 [_Compare with previous release_](https://github.com/crowdsecurity/php-common/compare/v2.3.1...v2.3.2)
 
