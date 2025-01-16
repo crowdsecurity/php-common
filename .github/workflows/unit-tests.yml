@@ -6,11 +6,7 @@ on:
     paths-ignore:
       - '**.md'
   workflow_dispatch:
-    inputs:
-      unit_tests:
-        type: boolean
-        description: Run Unit tests
-        default: true
+
   schedule:
     - cron: '15 3 * * 4'
 
@@ -78,7 +74,4 @@ jobs:
           ddev composer update --working-dir ./${{env.EXTENSION_PATH}}
 
       - name: Run Unit tests
-        if: |
-          github.event.inputs.unit_tests == 'true' ||
-          github.event_name == 'push'
         run:  ddev php ./${{env.EXTENSION_PATH}}/vendor/bin/phpunit --debug ./${{env.EXTENSION_PATH}}/tests/Unit --testdox
