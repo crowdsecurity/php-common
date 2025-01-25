@@ -17,6 +17,7 @@ namespace CrowdSec\Common\Tests\Unit;
 
 use CrowdSec\Common\Logger\ConsoleLog;
 use CrowdSec\Common\Tests\PHPUnitUtil;
+use Monolog\Level;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -49,12 +50,12 @@ final class ConsoleLogTest extends TestCase
         $handler = $handlers[0];
         $this->assertEquals('Monolog\Handler\StreamHandler', \get_class($handler), 'Handler should be Stream');
         $this->assertEquals('php://stdout', $handler->getUrl(), 'Handler url should be php://stdout');
-        $this->assertEquals(ConsoleLog::DEBUG, $handler->getLevel(), 'Handler should have default debug log level');
+        $this->assertEquals(Level::Debug, $handler->getLevel(), 'Handler should have default debug log level');
 
         $logger = new ConsoleLog(['level' => ConsoleLog::ALERT]);
         $handlers = $logger->getHandlers();
         $handler = $handlers[0];
-        $this->assertEquals(ConsoleLog::ALERT, $handler->getLevel(), 'Handler should have configured log level');
+        $this->assertEquals(Level::Alert, $handler->getLevel(), 'Handler should have configured log level');
 
         $error = '';
         try {
