@@ -88,7 +88,7 @@ final class FileLogTest extends TestCase
             'Prod File should not exist'
         );
 
-        $logger = new FileLog(['log_directory_path' => $this->root->url(), 'no_rotation' => true]);
+        $logger = new FileLog(['log_directory_path' => $this->root->url()]);
 
         $handlers = $logger->getMonologLogger()->getHandlers();
         $this->assertCount(1, $handlers, 'Should have one handler');
@@ -132,7 +132,7 @@ final class FileLogTest extends TestCase
             'Prod File should not exist'
         );
 
-        $logger = new FileLog(['log_directory_path' => $this->root->url()]);
+        $logger = new FileLog(['log_directory_path' => $this->root->url(), 'log_rotator' => true]);
 
         $handlers = $logger->getMonologLogger()->getHandlers();
         $this->assertCount(1, $handlers, 'Should have one handler');
@@ -166,8 +166,7 @@ final class FileLogTest extends TestCase
     {
         $logger = new FileLog([
             'log_directory_path' => $this->root->url(),
-            'debug_mode' => true,
-            'no_rotation' => true,
+            'debug_mode' => true
         ]);
 
         $handlers = $logger->getMonologLogger()->getHandlers();
@@ -301,6 +300,7 @@ final class FileLogTest extends TestCase
         $logger = new FileLog([
             'log_directory_path' => $this->root->url(),
             'debug_mode' => true,
+            'log_rotator' => true,
         ]);
 
         $handlers = $logger->getMonologLogger()->getHandlers();
@@ -343,6 +343,7 @@ final class FileLogTest extends TestCase
             'log_directory_path' => $this->root->url(),
             'debug_mode' => true,
             'disable_prod_log' => true,
+            'log_rotator' => true,
         ]);
         $logger->info('', [
             'type' => 'TEST3',
@@ -372,6 +373,7 @@ final class FileLogTest extends TestCase
     {
         $logger = new FileLog([
             'log_directory_path' => $this->root->url(),
+            'log_rotator' => true,
         ]);
         $this->assertEquals(
             false,
@@ -402,6 +404,7 @@ final class FileLogTest extends TestCase
         $logger = new FileLog([
             'log_directory_path' => $this->root->url(),
             'format' => '%message%|%level%|%message%|%level%',
+            'log_rotator' => true,
         ]);
         $logger->error('error-message', [
             'type' => 'TEST3',
@@ -419,6 +422,7 @@ final class FileLogTest extends TestCase
             new FileLog([
                 'log_directory_path' => $this->root->url(),
                 'format' => ['bad-config' => true],
+                'log_rotator' => true,
             ]);
         } catch (\TypeError $e) {
             $error = $e->getMessage();

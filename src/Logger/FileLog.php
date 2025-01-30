@@ -21,9 +21,6 @@ use Monolog\Logger;
  * @license   MIT License
  */
 
-/**
- * @todo in 3.0.0, log rotation should be default to false
- */
 class FileLog extends AbstractLog
 {
     /**
@@ -60,7 +57,7 @@ class FileLog extends AbstractLog
 
     private function buildFileHandler(string $logFilePath, int $logLevel, array $configs = []): HandlerInterface
     {
-        $fileHandler = empty($configs['no_rotation']) ?
+        $fileHandler = !empty($configs['log_rotator']) ?
             new RotatingFileHandler($logFilePath, 0, $logLevel) :
             new StreamHandler($logFilePath, $logLevel);
 
