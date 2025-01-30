@@ -5,9 +5,14 @@ declare(strict_types=1);
 namespace CrowdSec\Common\Logger;
 
 use Monolog\Logger;
+use Monolog\ResettableInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Abstract class for Monolog logger implementation.
+ *
+ * Since Monolog v3, Logger is a final class, so we can't extend it.
+ * Furthermore, level constants have been deprecated; that's why we define the values directly.
  *
  * @author    CrowdSec team
  *
@@ -15,26 +20,28 @@ use Monolog\Logger;
  *
  * @copyright Copyright (c) 2022+ CrowdSec
  * @license   MIT License
+ *
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-abstract class AbstractLog extends Logger
+abstract class AbstractLog implements LoggerInterface, ResettableInterface
 {
     /**
-     * Detailed debug information
+     * Detailed debug information.
      */
     public const DEBUG = 100;
 
     /**
-     * Interesting events
+     * Interesting events.
      */
     public const INFO = 200;
 
     /**
-     * Uncommon events
+     * Uncommon events.
      */
     public const NOTICE = 250;
 
     /**
-     * Exceptional occurrences that are not errors
+     * Exceptional occurrences that are not errors.
      *
      * Examples: Use of deprecated APIs, poor use of an API,
      * undesirable things that are not necessarily wrong.
@@ -42,19 +49,19 @@ abstract class AbstractLog extends Logger
     public const WARNING = 300;
 
     /**
-     * Runtime errors
+     * Runtime errors.
      */
     public const ERROR = 400;
 
     /**
-     * Critical conditions
+     * Critical conditions.
      *
      * Example: Application component unavailable, unexpected exception.
      */
     public const CRITICAL = 500;
 
     /**
-     * Action must be taken immediately
+     * Action must be taken immediately.
      *
      * Example: Entire website down, database unavailable, etc.
      * This should trigger the SMS alerts and wake you up.
@@ -70,10 +77,112 @@ abstract class AbstractLog extends Logger
      * @var string Format of log messages
      */
     protected $format = "%datetime%|%level%|%message%|%context%\n";
+    /**
+     * @var Logger
+     */
+    private $monologLogger;
 
     public function __construct(array $configs, string $name)
     {
         $this->format = $configs['format'] ?? $this->format;
-        parent::__construct($name);
+        $this->monologLogger = new Logger($name);
+    }
+
+    /**
+     * System is unusable.
+     */
+    public function emergency($message, array $context = []): void
+    {
+        $this->monologLogger->emergency($message, $context);
+    }
+
+    /**
+     * Action must be taken immediately.
+     *
+     * Example: Entire website down, database unavailable, etc. This should
+     * trigger the SMS alerts and wake you up.
+     */
+    public function alert($message, array $context = []): void
+    {
+        $this->monologLogger->alert($message, $context);
+    }
+
+    /**
+     * Critical conditions.
+     *
+     * Example: Application component unavailable, unexpected exception.
+     */
+    public function critical($message, array $context = []): void
+    {
+        $this->monologLogger->critical($message, $context);
+    }
+
+    /**
+     * Runtime errors that do not require immediate action but should typically
+     * be logged and monitored.
+     */
+    public function error($message, array $context = []): void
+    {
+        $this->monologLogger->error($message, $context);
+    }
+
+    /**
+     * Exceptional occurrences that are not errors.
+     *
+     * Example: Use of deprecated APIs, poor use of an API, undesirable things
+     * that are not necessarily wrong.
+     */
+    public function warning($message, array $context = []): void
+    {
+        $this->monologLogger->warning($message, $context);
+    }
+
+    /**
+     * Normal but significant events.
+     */
+    public function notice($message, array $context = []): void
+    {
+        $this->monologLogger->notice($message, $context);
+    }
+
+    /**
+     * Interesting events.
+     *
+     * Example: User logs in, SQL logs.
+     */
+    public function info($message, array $context = []): void
+    {
+        $this->monologLogger->info($message, $context);
+    }
+
+    /**
+     * Detailed debug information.
+     */
+    public function debug($message, array $context = []): void
+    {
+        $this->monologLogger->debug($message, $context);
+    }
+
+    /**
+     * Logs with an arbitrary level.
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function log($level, $message, array $context = []): void
+    {
+        $this->monologLogger->log($level, $message, $context);
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function reset(): void
+    {
+        $this->monologLogger->reset();
+    }
+
+    public function getMonologLogger(): Logger
+    {
+        return $this->monologLogger;
     }
 }
