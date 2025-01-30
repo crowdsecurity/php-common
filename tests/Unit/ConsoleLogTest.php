@@ -49,25 +49,44 @@ final class ConsoleLogTest extends TestCase
         $handler = $handlers[0];
         $this->assertEquals('Monolog\Handler\StreamHandler', \get_class($handler), 'Handler should be Stream');
         $this->assertEquals('php://stdout', $handler->getUrl(), 'Handler url should be php://stdout');
-        $this->assertEquals(ConsoleLog::DEBUG, $handler->getLevel(), 'Handler should have default debug log level');
+        $expectedLogLevel = class_exists('Monolog\Level') ? \Monolog\Level::from(ConsoleLog::DEBUG) : ConsoleLog::DEBUG;
+
+        $this->assertEquals($expectedLogLevel, $handler->getLevel(), 'Handler should have default debug log level');
 
         $logger = new ConsoleLog(['level' => ConsoleLog::ALERT]);
         $handlers = $logger->getHandlers();
         $handler = $handlers[0];
-        $this->assertEquals(ConsoleLog::ALERT, $handler->getLevel(), 'Handler should have configured log level');
+        $expectedLogLevel = class_exists('Monolog\Level') ? \Monolog\Level::from(ConsoleLog::ALERT) : ConsoleLog::ALERT;
+        $this->assertEquals($expectedLogLevel, $handler->getLevel(), 'Handler should have configured log level');
 
         $error = '';
-        try {
-            $logger = new ConsoleLog(['level' => 'do-no-exist']);
-        } catch (\Psr\Log\InvalidArgumentException $e) {
-            $error = $e->getMessage();
-        }
+        // Monolog v3
+        if (\class_exists('Monolog\Level')) {
+            try {
+                $logger = new ConsoleLog(['level' => 888]);
+            } catch (\Psr\Log\InvalidArgumentException $e) {
+                $error = $e->getMessage();
+            }
 
-        PHPUnitUtil::assertRegExp(
-            $this,
-            '/Level "do-no-exist" is not defined, use one of/',
-            $error,
-            'Should throw an error'
-        );
+            PHPUnitUtil::assertRegExp(
+                $this,
+                '/Level "888" is not defined, use one of/',
+                $error,
+                'Should throw an error'
+            );
+        } else {
+            try {
+                $logger = new ConsoleLog(['level' => 'do-not-exist']);
+            } catch (\Psr\Log\InvalidArgumentException $e) {
+                $error = $e->getMessage();
+            }
+
+            PHPUnitUtil::assertRegExp(
+                $this,
+                '/Level "do-not-exist" is not defined, use one of: 100, 200, 250, 300, 400, 500, 550, 600/',
+                $error,
+                'Should throw an error'
+            );
+        }
     }
 }

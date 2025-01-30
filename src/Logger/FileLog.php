@@ -45,13 +45,15 @@ class FileLog extends AbstractLog
         $logDir = $configs['log_directory_path'] ?? __DIR__ . '/.logs';
         if (empty($configs['disable_prod_log'])) {
             $prodLogPath = $logDir . '/' . self::PROD_FILE;
-            $fileHandler = $this->buildFileHandler($prodLogPath, Logger::INFO, $configs);
+            $logLevel = Logger::API === 3 ? constant('Monolog\Level::Info')->value : AbstractLog::INFO;
+            $fileHandler = $this->buildFileHandler($prodLogPath, $logLevel, $configs);
             $this->pushHandler($fileHandler);
         }
 
         if (!empty($configs['debug_mode'])) {
             $debugLogPath = $logDir . '/' . self::DEBUG_FILE;
-            $debugFileHandler = $this->buildFileHandler($debugLogPath, Logger::DEBUG, $configs);
+            $logLevel = Logger::API === 3 ? constant('Monolog\Level::Debug')->value : AbstractLog::DEBUG;
+            $debugFileHandler = $this->buildFileHandler($debugLogPath, $logLevel, $configs);
             $this->pushHandler($debugFileHandler);
         }
     }
