@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace CrowdSec\Common\Logger;
 
 use Monolog\Logger;
-use Monolog\ResettableInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -21,9 +20,8 @@ use Psr\Log\LoggerInterface;
  * @copyright Copyright (c) 2022+ CrowdSec
  * @license   MIT License
  *
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-abstract class AbstractLog implements LoggerInterface, ResettableInterface
+abstract class AbstractLog implements LoggerInterface
 {
     /**
      * Detailed debug information.
@@ -171,14 +169,6 @@ abstract class AbstractLog implements LoggerInterface, ResettableInterface
     public function log($level, $message, array $context = []): void
     {
         $this->monologLogger->log($level, $message, $context);
-    }
-
-    /**
-     * @codeCoverageIgnore
-     */
-    public function reset(): void
-    {
-        $this->monologLogger->reset();
     }
 
     public function getMonologLogger(): Logger
