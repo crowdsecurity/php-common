@@ -14,17 +14,16 @@ As far as possible, we try to adhere to [Symfony guidelines](https://symfony.com
 
 ---
 
-## [3.0.0](https://github.com/crowdsecurity/php-common/releases/tag/v3.0.0) - 2025-??-??
-[_Compare with previous release_](https://github.com/crowdsecurity/php-common/compare/v2.4.0...HEAD)
-
-**This release is not yet published.**
+## [3.0.0](https://github.com/crowdsecurity/php-common/releases/tag/v3.0.0) - 2025-01-31
+[_Compare with previous release_](https://github.com/crowdsecurity/php-common/compare/v2.4.0...v3.0.0)
 
 ### Changed
 
-- Allow Monolog 3 package
+- Allow `monolog/monolog` 3 package
 - **Breaking change**: `ConsoleLog` and `FileLog` does not extend `Monolog\Logger` anymore as this class became 
   final in Monolog 3. They now implement `Psr\Log\LoggerInterface` directly and use a `Monolog\Logger` instance internally.
-- `FileLog` does not rotate log files by default anymore. You can enable it by setting the `log_rotator` configuration to `true`.
+- **Breaking change**: `FileLog` does not rotate log files by default anymore. You can enable it by setting the 
+  `log_rotator` configuration to `true`.
 
 ---
 
