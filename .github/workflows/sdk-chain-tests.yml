@@ -14,7 +14,6 @@ env:
 jobs:
   test-standalone-bouncer:
     name: Run Standalone Bouncer tests
-    if: ${{ !contains(github.event.head_commit.message, 'chore(') }}
     uses: crowdsecurity/cs-standalone-php-bouncer/.github/workflows/php-sdk-development-tests.yml@22b9a34f4623d3380e970b4c7569fe4d9397f1eb
     with:
       php_common_json: '["${{ github.ref_name }}"]'
