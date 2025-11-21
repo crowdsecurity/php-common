@@ -50,7 +50,9 @@ class Curl extends AbstractRequestHandler
             throw new ClientException('Unexpected empty response http code');
         }
 
-        curl_close($handle);
+        if (PHP_VERSION_ID < 80000) {
+            curl_close($handle);
+        }
 
         return new Response((string) $response, $statusCode);
     }

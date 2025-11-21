@@ -31,7 +31,9 @@ class PHPUnitUtil
     {
         $class = new \ReflectionClass($obj);
         $method = $class->getMethod($name);
-        $method->setAccessible(true);
+        if (PHP_VERSION_ID < 80100) {
+            $method->setAccessible(true);
+        }
 
         return $method->invokeArgs($obj, $args);
     }
@@ -56,7 +58,9 @@ class PHPUnitUtil
     {
         $reflection = new \ReflectionClass($object);
         $reflection_property = $reflection->getProperty($property);
-        $reflection_property->setAccessible(true);
+        if (PHP_VERSION_ID < 80100) {
+            $reflection_property->setAccessible(true);
+        }
         $reflection_property->setValue($object, $value);
     }
 }
