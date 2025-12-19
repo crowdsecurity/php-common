@@ -29,7 +29,7 @@
 
 There are many ways to install this library on a local PHP environment.
 
-We are using [DDEV](https://ddev.readthedocs.io/en/stable/) because it is quite simple to use and customize.
+We are using [DDEV](https://docs.ddev.com/en/stable/) because it is quite simple to use and customize.
 
 Of course, you may use your own local stack, but we provide here some useful tools that depends on DDEV.
 
@@ -41,7 +41,7 @@ For a quick start, follow the below steps.
 
 #### DDEV installation
 
-For the DDEV installation, please follow the [official instructions](https://ddev.readthedocs.io/en/stable/users/install/ddev-installation/).
+For the DDEV installation, please follow the [official instructions](https://docs.ddev.com/en/stable/users/install/ddev-installation/).
 
 
 #### Prepare DDEV PHP environment
@@ -80,7 +80,7 @@ ddev config --project-type=php --php-version=8.2 --project-name=crowdsec-php-com
 - Add some DDEV add-ons:
 
 ```bash
-ddev get julienloizelet/ddev-tools
+ddev add-on get julienloizelet/ddev-tools
 ```
 
 - Clone this repo sources in a `my-code/common` folder:

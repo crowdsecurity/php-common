@@ -3,6 +3,11 @@ on:
   push:
     paths-ignore:
       - "**.md"
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - "**.md"
 
 permissions:
   contents: read
@@ -14,10 +19,9 @@ env:
 jobs:
   test-standalone-bouncer:
     name: Run Standalone Bouncer tests
-    if: ${{ !contains(github.event.head_commit.message, 'chore(') }}
-    uses: crowdsecurity/cs-standalone-php-bouncer/.github/workflows/php-sdk-development-tests.yml@22b9a34f4623d3380e970b4c7569fe4d9397f1eb
+    uses: crowdsecurity/cs-standalone-php-bouncer/.github/workflows/php-sdk-development-tests.yml@main
     with:
-      php_common_json: '["${{ github.ref_name }}"]'
+      php_common_json: '["${{ github.head_ref || github.ref_name }}"]'
       lapi_client_json: '["main"]'
       capi_client_json: '["main"]'
       remediation_engine_json: '["main"]'
@@ -25,20 +29,18 @@ jobs:
 
   test-bouncer-lib:
     name: Run Bouncer lib tests
-    if: ${{ !contains(github.event.head_commit.message, 'chore(') }}
-    uses: crowdsecurity/php-cs-bouncer/.github/workflows/php-sdk-development-tests.yml@c15ac30dfb66f51c0794cb02f4449056116c85bf
+    uses: crowdsecurity/php-cs-bouncer/.github/workflows/php-sdk-development-tests.yml@main
     with:
-      php_common_json: '["${{ github.ref_name }}"]'
+      php_common_json: '["${{ github.head_ref || github.ref_name }}"]'
       lapi_client_json: '["main"]'
       capi_client_json: '["main"]'
       remediation_engine_json: '["main"]'
 
   test-remediation-engine:
     name: Run Remediation Engine tests
-    if: ${{ !contains(github.event.head_commit.message, 'chore(') }}
     uses: crowdsecurity/php-remediation-engine/.github/workflows/php-sdk-development-tests.yml@main
     with:
-      php_common_json: '["${{ github.ref_name }}"]'
+      php_common_json: '["${{ github.head_ref || github.ref_name }}"]'
       lapi_client_json: '["main"]'
       capi_client_json: '["main"]'
     secrets:
@@ -47,17 +49,15 @@ jobs:
 
   test-lapi-client:
     name: Run Lapi client tests
-    if: ${{ !contains(github.event.head_commit.message, 'chore(') }}
     uses: crowdsecurity/php-lapi-client/.github/workflows/php-sdk-development-tests.yml@main
     with:
-      php_common_json: '["${{ github.ref_name }}"]'
+      php_common_json: '["${{ github.head_ref || github.ref_name }}"]'
 
   test-capi-client:
     name: Run Capi client tests
-    if: ${{ !contains(github.event.head_commit.message, 'chore(') }}
     uses: crowdsecurity/php-capi-client/.github/workflows/php-sdk-development-tests.yml@main
     with:
-      php_common_json: '["${{ github.ref_name }}"]'
+      php_common_json: '["${{ github.head_ref || github.ref_name }}"]'
     secrets:
       TEST_MACHINE_ID: ${{ secrets.TEST_MACHINE_ID }}
       TEST_MACHINE_PWD: ${{ secrets.TEST_MACHINE_PWD }}
@@ -65,10 +65,9 @@ jobs:
 
   test-magento-engine:
     name: Run Magento 2 Engine module tests
-    if: ${{ !contains(github.event.head_commit.message, 'chore(') }}
     uses: crowdsecurity/magento-cs-extension/.github/workflows/php-sdk-development-tests.yml@main
     with:
-      php_common_json: '["${{ github.ref_name }}"]'
+      php_common_json: '["${{ github.head_ref || github.ref_name }}"]'
       lapi_client_json: '["main"]'
       capi_client_json: '["main"]'
       remediation_engine_json: '["main"]'
