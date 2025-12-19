@@ -14,7 +14,7 @@ As far as possible, we try to adhere to [Symfony guidelines](https://symfony.com
 
 ---
 
-## [3.0.1](https://github.com/crowdsecurity/php-common/releases/tag/v3.0.1) - 2025-??-??
+## [3.0.1](https://github.com/crowdsecurity/php-common/releases/tag/v3.0.1) - 2025-12-19
 [_Compare with previous release_](https://github.com/crowdsecurity/php-common/compare/v3.0.0...v3.0.1)
 
 ### Fixed
