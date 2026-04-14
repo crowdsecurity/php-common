@@ -103,6 +103,17 @@ class Curl extends AbstractRequestHandler
         $url = $request->getUri();
         $parameters = $request->getParams();
         $rawBody = $request instanceof AppSecRequest ? $request->getRawBody() : '';
+
+        // For AppSec requests, remove Host header - let cURL set it from URL
+        // This matches the behavior in FileGetContents handler
+        if ($request instanceof AppSecRequest) {
+            /**
+             * It's not recommended to set the Host header explicitly.
+             * In all cases, for AppSec requests, the originating host is sent in the X-Crowdsec-Appsec-Host header.
+             */
+            unset($headers['Host']);
+        }
+
         $options = [
             \CURLOPT_HEADER => false,
             \CURLOPT_RETURNTRANSFER => true,
